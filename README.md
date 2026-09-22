@@ -13,7 +13,7 @@ Main Entity: `LaLiga Card`
 
 Main Entity Attributes: 
 * `player_name`
-* `card_price`
+* `team`
 * `card_image`
 * `description`
 * `illustrator`
