@@ -18,7 +18,7 @@ Main Entity Attributes:
 * `description`
 * `illustrator`
 * `release_date`
-* `collection` (LaLiga EA Sports, LaLiga Hypermotion, LaLiga Promises, LaLiga Genuine, LaLiga Fantasy, LaLiga Santander)
+* `collection` (LaLiga, LaLiga Hypermotion, LaLiga Genuine...)
 
 Secondary Entity: `LaLiga Card Review`
 
