@@ -2,7 +2,7 @@
 
 | Name  | Adress | Github |
 | :-------------:|:-------------:| :-------------: |
-|Carlos Sanchez Gavilán|c.sanchezga.2024@alumnos.urjc.es|carloosanchez|
+|Carlos Sanchez Gavilán|c.sanchezga.2024@alumnos.urjc.es|carloosanch|
 |Sara El Moussaoui Houlbi|s.elmoussaoui.2024@alumnos.urjc.es|sara2000006|
 |Diego Ezquerra Barroso|d.ezquerra.2024@alumnos.urjc.es|DiegoEzquerra1|
 |Javier Rodríguez Gil|j.rodriguezgi.2024@alumnos.urjc.es|javrodr19|
