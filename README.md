@@ -17,8 +17,9 @@ Main Entity Attributes:
 * `image`
 * `description`
 * `photographer`
+* `price` 
 * `date_of_birth`
-* `League`
+* `league`
 
 Secondary Entity: `LaLiga Card Review`
 
