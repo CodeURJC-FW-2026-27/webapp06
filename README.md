@@ -1,4 +1,4 @@
-# **LALIGA SHOP**
+# **LEAGUES MARKET**
 
 | Name  | Adress | Github |
 | :-------------:|:-------------:| :-------------: |
@@ -9,16 +9,16 @@
 
 ## **Functionality**
 ### Entities
-Main Entity: `LaLiga Card`
+Main Entity: `LaLiga Player`
 
 Main Entity Attributes: 
 * `player_name`
 * `team`
-* `card_image`
+* `image`
 * `description`
-* `illustrator`
-* `release_date`
-* `collection` (LaLiga, LaLiga Hypermotion, LaLiga Genuine...)
+* `photographer`
+* `date_of_birth`
+* `League`
 
 Secondary Entity: `LaLiga Card Review`
 
@@ -29,9 +29,9 @@ Secondary Entity Attributes:
 * `rating`
 
 ### Images
-Each main entity will have a single associated `card_image`.
+Each main entity will have a single associated `image`.
 
 ### Categorization
-Each card will be divided according to its `collection_number`.
+Each card will be divided according to its `league`.
 
 You can filter each card by `player_name`.
