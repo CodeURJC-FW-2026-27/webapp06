@@ -1,0 +1,38 @@
+.search-container {
+    max-width: 500px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    border-radius: 50px;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-container:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+}
+
+/* 2. Campo de texto */
+.search-input {
+    border: 2px solid transparent;
+    padding-left: 25px;
+    background-color: #ffffff;
+    color: #212529;
+}
+
+.search-input:focus {
+    box-shadow: none;
+    border-color: #0d6efd;
+}
+
+/* 3. Botón de envío */
+.search-btn {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    background-color: #0d6efd;
+    border: none;
+    padding: 0 25px;
+}
+
+.search-btn:hover {
+    background-color: #0b5ed7;
+}
