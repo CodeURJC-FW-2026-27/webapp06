@@ -9,6 +9,9 @@
     <title>Shop Homepage - Start Bootstrap Template</title>
     <!-- Favicon-->
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet" />
     <!-- Bootstrap icons-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
     <!-- Core theme CSS (includes Bootstrap)-->
@@ -18,25 +21,26 @@
 
 <body class="body">
     <!-- Header-->
-    <header class="bg-dark py-5">
-        <div class="container px-4 px-lg-5 my-5">
-            <div class="text-center text-white">
+    <header class="bg-dark py-4">
+        <div class="container px-4 px-lg-5 my-3">
+            <div class="header-content text-white">
                 <h1 class="display-4 fw-bolder">LEAGUES MARKET</h1>
-                <br>
-                <form action="/search" method="GET" class="d-flex justify-content-center">
-                    <div class="input-group search-container">
-                        <input type="search" name="query" class="form-control search-input"
-                            placeholder="Buscar jugadores, equipos..." aria-label="Buscar">
-                        <button class="btn btn-primary search-btn" type="submit">Buscar</button>
+                <div class="header-tools">
+                    <form action="/search" method="GET" class="d-flex justify-content-end">
+                        <div class="input-group search-container">
+                            <input type="search" name="query" class="form-control search-input"
+                                placeholder="Buscar jugadores, equipos..." aria-label="Buscar">
+                            <button class="btn btn-primary search-btn" type="submit">Buscar</button>
+                        </div>
+                    </form>
+                    <div class="category-list mt-4 d-flex justify-content-start flex-wrap align-items-center gap-2">
+                        <span class="category-label text-white-50 me-1">Categorías:</span>
+                        <button type="button" class="btn btn-light btn-sm category-badge">Todas</button>
+                        <button type="button" class="btn btn-outline-light btn-sm category-badge">Porteros</button>
+                        <button type="button" class="btn btn-outline-light btn-sm category-badge">Defensas</button>
+                        <button type="button" class="btn btn-outline-light btn-sm category-badge">Centrocampistas</button>
+                        <button type="button" class="btn btn-outline-light btn-sm category-badge">Delanteros</button>
                     </div>
-                </form>
-                <div class="category-list mt-4 d-flex justify-content-center flex-wrap align-items-center gap-2">
-                    <span class="category-label text-white-50 me-1">Categorías:</span>
-                    <a href="/league/all" class="category-badge active">Todas</a>
-                    <a href="/league/laliga" class="category-badge">LaLiga</a>
-                    <a href="/league/premier" class="category-badge">Premier League</a>
-                    <a href="/league/serie-a" class="category-badge">Serie A</a>
-                    <a href="/league/bundesliga" class="category-badge">Bundesliga</a>
                 </div>
             </div>
         </div>
