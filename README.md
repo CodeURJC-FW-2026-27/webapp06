@@ -39,19 +39,19 @@ You can filter each card by `player_name`.
 
 Practica 1.
 Javi :
-  Descripción  :
-  Comits significativos :
-  Ficheros participado : 
+  Description  :
+  Significant commits :
+  Relevant Files : 
 Carlos :
-  Descripción  :
-  Comits significativos :
-  Ficheros participado : 
+  Description  :
+  Significant commits :
+  Relevant Files : 
 Sara :
-  Descripción  :
-  Comits significativos :
-  Ficheros participado : 
+  Description :
+  Significant commits :
+  Relevant Files : 
 Diego : 
-  Descripción  :
-  Comits significativos :
-  Ficheros participado : 
+  Description  :
+  Significant commits :
+  Relevant Files : 
   
