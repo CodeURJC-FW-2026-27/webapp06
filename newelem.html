@@ -7,14 +7,14 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
     <title>Crear Jugador - Shop Homepage</title>
-    <!-- Favicon-->
+
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet" />
-    <!-- Bootstrap icons-->
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
-    <!-- Core theme CSS (includes Bootstrap)-->
+
     <link href="css/styles.css" rel="stylesheet" />
     <link href="css/searchbar.css" rel="stylesheet" />
 </head>
@@ -40,7 +40,8 @@
                         <button type="button" class="btn btn-light btn-sm category-badge">Todas</button>
                         <button type="button" class="btn btn-outline-light btn-sm category-badge">Porteros</button>
                         <button type="button" class="btn btn-outline-light btn-sm category-badge">Defensas</button>
-                        <button type="button" class="btn btn-outline-light btn-sm category-badge">Centrocampistas</button>
+                        <button type="button"
+                            class="btn btn-outline-light btn-sm category-badge">Centrocampistas</button>
                         <button type="button" class="btn btn-outline-light btn-sm category-badge">Delanteros</button>
                     </div>
                 </div>
@@ -48,7 +49,7 @@
         </div>
     </header>
 
-    <!-- Contenido principal -->
+    <!-- Principal Content -->
     <main class="flex-grow-1 py-5">
         <div class="container">
             <div class="row justify-content-center">
@@ -59,62 +60,62 @@
                         </div>
                         <div class="card-body">
                             <form class="form" action="#" method="POST" enctype="multipart/form-data">
-                                <!-- Nombre del jugador -->
+                                <!-- Player Name -->
                                 <div class="mb-3">
                                     <label for="player_name" class="form-label">Nombre del jugador:</label>
                                     <input type="text" class="form-control" id="player_name" name="player_name"
                                         placeholder="Nombre del jugador" required />
                                 </div>
 
-                                <!-- Fecha de nacimiento -->
+                                <!-- Date of Birth -->
                                 <div class="mb-3">
                                     <label for="date_of_birth" class="form-label">Fecha de nacimiento:</label>
                                     <input type="date" class="form-control" id="date_of_birth" name="date_of_birth"
                                         required />
                                 </div>
 
-                                <!-- Equipo del jugador -->
+                                <!-- Player Team -->
                                 <div class="mb-3">
                                     <label for="player_team" class="form-label">Equipo del jugador:</label>
                                     <input type="text" class="form-control" id="player_team" name="player_team"
                                         placeholder="Equipo del jugador" required />
                                 </div>
 
-                                <!-- Posición del jugador -->
+                                <!-- Player Position -->
                                 <div class="mb-3">
                                     <label for="position" class="form-label">Posición del jugador:</label>
                                     <input type="text" class="form-control" id="position" name="position"
                                         placeholder="Posición" required />
                                 </div>
 
-                                <!-- Liga -->
+                                <!-- League -->
                                 <div class="mb-3">
                                     <label for="league" class="form-label">Liga:</label>
                                     <input type="text" class="form-control" id="league" name="league" placeholder="Liga"
                                         required />
                                 </div>
 
-                                <!-- Descripción del jugador -->
+                                <!-- Player Description -->
                                 <div class="mb-3">
                                     <label for="description" class="form-label">Descripción del jugador:</label>
                                     <textarea class="form-control" id="description" name="description" rows="3"
                                         placeholder="Escribe una descripción del jugador" required></textarea>
                                 </div>
 
-                                <!-- Imagen del jugador -->
+                                <!-- Player Image -->
                                 <div class="mb-3">
                                     <label for="player_image" class="form-label">Imagen del jugador:</label>
                                     <input type="file" class="form-control" id="player_image" name="player_image"
                                         accept="image/*" required />
                                 </div>
-
+                                <!-- Photographer -->
                                 <div class="mb-3">
                                     <label for="photographer" class="form-label">Fotógrafo:</label>
                                     <input type="text" class="form-control" id="photographer" name="photographer"
                                         placeholder="Nombre del fotógrafo" required />
                                 </div>
 
-                                <!-- Precio -->
+                                <!-- Price -->
                                 <div class="mb-3">
                                     <label for="price" class="form-label">Precio:</label>
                                     <div class="input-group">
@@ -124,7 +125,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Botones -->
+                                <!-- Buttons -->
 
                                 <div class="d-flex gap-2">
                                     <a href="index.html" class="btn btn-danger">
