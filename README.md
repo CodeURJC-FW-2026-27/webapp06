@@ -36,3 +36,22 @@ Each main entity will have a single associated `image`.
 Each card will be divided according to its `league`.
 
 You can filter each card by `player_name`.
+
+Practica 1.
+Javi :
+  Descripción  :
+  Comits significativos :
+  Ficheros participado : 
+Carlos :
+  Descripción  :
+  Comits significativos :
+  Ficheros participado : 
+Sara :
+  Descripción  :
+  Comits significativos :
+  Ficheros participado : 
+Diego : 
+  Descripción  :
+  Comits significativos :
+  Ficheros participado : 
+  
