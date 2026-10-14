@@ -10824,14 +10824,11 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
-//////////////////////////////////////////////////////////
 
 .card:hover {
   box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.2);
 }
 
-<<<<<<< HEAD
-=======
 @media (prefers-reduced-motion: reduce) {
 
   .card {
@@ -10854,12 +10851,26 @@ textarea.form-control-lg {
   overflow: hidden;
 }
 
+.player-detail-page .player-detail-image-container {
+  position: relative;
+}
+
 .player-detail-page .player-detail-image {
   width: 100%;
   height: 520px;
   object-fit: cover;
   object-position: top;
   display: block;
+}
+
+.player-detail-page .photographer-credit {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  padding: 0.25rem 0.5rem;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.65);
+  border-radius: 0.25rem;
 }
 
 .player-detail-page .player-price {
@@ -10880,4 +10891,3 @@ textarea.form-control-lg {
   font-weight: 700;
   margin-bottom: 0;
 }
->>>>>>> 9adcc59 (detalle: comentarios, botones)
