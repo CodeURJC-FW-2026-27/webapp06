@@ -1,6 +1,6 @@
 # **LEAGUES MARKET**
 
-| Name  | Adress | Github |
+| Name  | Address | Github |
 | :-------------:|:-------------:| :-------------: |
 |Carlos Sanchez Gavilán|c.sanchezga.2024@alumnos.urjc.es|carloosanch|
 |Sara El Moussaoui Houlbi|s.elmoussaoui.2024@alumnos.urjc.es|sara2000006|
@@ -20,6 +20,7 @@ Main Entity Attributes:
 * `price` 
 * `date_of_birth`
 * `league`
+* `position`
 
 Secondary Entity: `LaLiga Card Review`
 
@@ -33,7 +34,7 @@ Secondary Entity Attributes:
 Each main entity will have a single associated `image`.
 
 ### Categorization
-Each card will be divided according to its `league`.
+Each card will be divided according to its `position` (Porteros, Defensas, Centrocampistas, Delanteros), selectable in the header and as a dropdown when creating a player.
 
 You can filter each card by `player_name`.
 
@@ -50,9 +51,13 @@ You can filter each card by `player_name`.
 Practica 1.
 
 Javi :
-  Description  :
-  Significant commits : 
-  Relevant Files : 
+  Description  : I set up the project from the Bootstrap template (styles, favicon, scripts), added the example player images and implemented the main page (`index.html`): a Bootstrap grid with 9 player cards that link to the detail page, plus the "Crear nuevo elemento" button.
+
+  Significant commits :
+  [3d733fc91bd949c285ff232426cbcd8944fb6f8e](https://github.com/CodeURJC-FW-2026-27/webapp06/commit/3d733fc91bd949c285ff232426cbcd8944fb6f8e),
+  [a930b491455d797970ce417566dd17c029f848fd](https://github.com/CodeURJC-FW-2026-27/webapp06/commit/a930b491455d797970ce417566dd17c029f848fd)
+
+  Relevant Files : index.html, css/styles.css
   
 Carlos :
   Description  : Participado en detalle.html
@@ -73,5 +78,5 @@ Diego :
   
   Significant commits : a8ff2671caedd371237ae59b930b91340b5dd4b5, 5f542cbb9f219f063332cd2fb21898a97cdea8f4, 0a03d4f385f4b116bf5f92c38996ca90ee71e15b, 89bb9aa237e6721306081a2a9a851711bfb1bd9d
   
-  Relevant Files : newelem.html, newelem.html
+  Relevant Files : newelem.html, newcomen.html
   

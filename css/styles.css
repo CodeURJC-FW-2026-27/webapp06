@@ -10891,3 +10891,9 @@ textarea.form-control-lg {
   font-weight: 700;
   margin-bottom: 0;
 }
+
+.player-card-img {
+  height: 300px;
+  object-fit: cover;
+  object-position: top;
+}

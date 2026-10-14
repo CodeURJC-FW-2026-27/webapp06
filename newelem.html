@@ -4,9 +4,9 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
-    <title>Crear Jugador - Shop Homepage</title>
+    <meta name="description" content="Formulario para crear un nuevo jugador" />
+    <meta name="author" content="Grupo 06" />
+    <title>LEAGUES MARKET - Crear jugador</title>
 
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -19,7 +19,7 @@
     <link href="css/searchbar.css" rel="stylesheet" />
 </head>
 
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100 bg-light">
     <!-- Header-->
     <header class="bg-dark py-4">
         <div class="container px-4 px-lg-5 my-3">
@@ -28,7 +28,7 @@
                     <h1 class="display-4 fw-bolder">LEAGUES MARKET</h1>
                 </a>
                 <div class="header-tools">
-                    <form action="/search" method="GET" class="d-flex justify-content-end">
+                    <form action="index.html" method="GET" class="d-flex justify-content-end">
                         <div class="input-group search-container">
                             <input type="search" name="query" class="form-control search-input"
                                 placeholder="Buscar jugadores, equipos..." aria-label="Buscar">
@@ -59,7 +59,7 @@
                             <h2 class="h4 mb-0">Crear Nuevo Jugador</h2>
                         </div>
                         <div class="card-body">
-                            <form class="form" action="index.html" method="POST" enctype="multipart/form-data">
+                            <form class="form" action="index.html" method="GET" enctype="multipart/form-data">
                                 <!-- Player Name -->
                                 <div class="mb-3">
                                     <label for="player_name" class="form-label">Nombre del jugador:</label>
@@ -83,12 +83,12 @@
 
                                 <!-- Player Position -->
                                 <div class="mb-3">
-                                    <label for="position" class="form-label">Posición del jugador:</label>
+                                    <label for="position" class="form-label">Categoría (posición del jugador):</label>
                                     <select class="form-select" id="position" name="position" required>
-                                        <option value="" disabled selected>Selecciona una posición</option>
+                                        <option value="" disabled selected>Selecciona una categoría</option>
                                         <option value="portero">Portero</option>
                                         <option value="defensa">Defensa</option>
-                                        <option value="mediocentro">Mediocentro</option>
+                                        <option value="centrocampista">Centrocampista</option>
                                         <option value="delantero">Delantero</option>
                                     </select>
                                 </div>
@@ -124,7 +124,7 @@
                                 <div class="mb-3">
                                     <label for="price" class="form-label">Precio:</label>
                                     <div class="input-group">
-                                        <span class="input-group-text">$</span>
+                                        <span class="input-group-text">€</span>
                                         <input type="number" class="form-control" id="price" name="price"
                                             placeholder="Precio" step="1" min="0" required />
                                     </div>
