@@ -46,19 +46,24 @@ You can filter each card by `player_name`.
 
 
 
+
 Practica 1.
+
 Javi :
   Description  :
   Significant commits : 
   Relevant Files : 
+  
 Carlos :
   Description  : Participado en detalle.html
   Significant commits : https://github.com/CodeURJC-FW-2026-27/webapp06/commit/main#diff-65671c71daad474bc4f336ca3eb8a37c85b4b39fa84182254a327fa5286b593c
   Relevant Files : detalle.html
+  
 Sara :
   Description :
   Significant commits :
   Relevant Files : 
+  
 Diego : 
   Description  : Creation page and details
   Significant commits : https://github.com/CodeURJC-FW-2026-27/webapp06/commit/a8ff2671caedd371237ae59b930b91340b5dd4b5, https://github.com/CodeURJC-FW-2026-27/webapp06/commit/5f542cbb9f219f063332cd2fb21898a97cdea8f4
