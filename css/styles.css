@@ -10825,12 +10825,8 @@ textarea.form-control-lg {
   }
 }
 //////////////////////////////////////////////////////////
-.card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
 
 .card:hover {
-  transform: translateY(-0.35rem);
   box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.2);
 }
 
