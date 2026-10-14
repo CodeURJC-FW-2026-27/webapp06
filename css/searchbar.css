@@ -1,4 +1,5 @@
 .search-container {
+    width: 100%;
     max-width: 500px;
     border-radius: 50px;
     overflow: hidden;
@@ -40,6 +41,7 @@ header .header-content {
 header .header-content h1 {
     margin-bottom: 0;
     font-size: 5rem;
+    letter-spacing: 0.1em;
 }
 
 
@@ -55,23 +57,12 @@ header .header-tools {
     width: 100%;
 }
 
-header .header-tools form {
-    width: 100%;
-    max-width: 500px;
-}
-
-.search-container {
-    width: 100%;
-}
-
+header .header-tools form,
 header .header-tools .category-list {
     width: 100%;
     max-width: 500px;
 }
 
-header .display-4 {
-    letter-spacing: 0.1em;
-}
 
 @media (min-width: 1200px) {
     header .display-4 {
