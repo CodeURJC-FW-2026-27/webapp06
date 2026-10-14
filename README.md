@@ -57,7 +57,7 @@ Javi :
   [3d733fc91bd949c285ff232426cbcd8944fb6f8e](https://github.com/CodeURJC-FW-2026-27/webapp06/commit/3d733fc91bd949c285ff232426cbcd8944fb6f8e),
   [a930b491455d797970ce417566dd17c029f848fd](https://github.com/CodeURJC-FW-2026-27/webapp06/commit/a930b491455d797970ce417566dd17c029f848fd)
 
-  Relevant Files : index.html, css/styles.css
+  Relevant Files : index.html
   
 Carlos :
   Description  : Participado en detalle.html
