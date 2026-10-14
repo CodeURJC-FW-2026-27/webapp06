@@ -60,7 +60,9 @@ Carlos :
   Relevant Files : detalle.html
   
 Sara :
+
   Description : I implemented the header, footer and the searchbar.css.
+  
   Significant commits : 
   [c36f8d4288afebc2bf83f429cad470ee32bb30f1](https://github.com/CodeURJC-FW-2026-27/webapp06/commit/c36f8d4288afebc2bf83f429cad470ee32bb30f1)
 
