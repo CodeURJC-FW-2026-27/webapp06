@@ -42,7 +42,7 @@ You can filter each card by `player_name`.
 <img width="942" height="498" alt="image" src="https://github.com/user-attachments/assets/d50fd5fc-60d4-4772-9277-dfe035fa68c7" />
 <img width="949" height="503" alt="image" src="https://github.com/user-attachments/assets/a1650e84-362c-4f49-a8e0-18f1b78580bf" />
 <img width="941" height="499" alt="image" src="https://github.com/user-attachments/assets/290fbf1c-d634-4a42-a26f-9d0b4bb2b943" />
-
+<img width="1396" height="256" alt="Formulario-pagina-detalle" src="https://github.com/user-attachments/assets/acca3565-f0b2-4fe6-8f7f-a839f1bb97be" />
 
 
 
