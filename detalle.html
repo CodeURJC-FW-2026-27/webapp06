@@ -10,47 +10,8 @@
         <link href="css/styles.css" rel="stylesheet" />
         <link href="css/searchbar.css" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet" />
-        <style>
-            body {
-                background: #f8f9fa;
-            }
-
-            .player-detail-card {
-                background: #fff;
-                border-radius: 1rem;
-                box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.08);
-                overflow: hidden;
-            }
-
-            .player-detail-image {
-                width: 100%;
-                height: 520px;
-                object-fit: cover;
-                object-position: top;
-                display: block;
-            }
-
-            .player-price {
-                background: #f1f3f5;
-                border-top: 1px solid rgba(0, 0, 0, 0.05);
-            }
-
-            .info-label {
-                font-size: 0.75rem;
-                text-transform: uppercase;
-                letter-spacing: 0.08rem;
-                color: #6c757d;
-                margin-bottom: 0.3rem;
-            }
-
-            .info-value {
-                font-size: 1.5rem;
-                font-weight: 700;
-                margin-bottom: 0;
-            }
-        </style>
     </head>
-    <body>
+    <body class="player-detail-page">
     <header class="bg-dark py-4">
         <div class="container px-4 px-lg-5 my-3">
             <div class="header-content text-white">
@@ -79,6 +40,9 @@
 
         <section class="py-5">
             <div class="container px-4 px-lg-5">
+                <a class="btn btn-outline-dark mb-3" href="index.html">
+                    <i class="bi bi-arrow-left me-2"></i>Volver a la página principal
+                </a>
                 <div class="player-detail-card">
                     <div class="row g-0 align-items-stretch">
                         <div class="col-lg-5">
@@ -92,7 +56,26 @@
                         <div class="col-lg-7">
                             <div class="p-4 p-lg-5">
                                 <span class="badge bg-dark rounded-pill mb-3">Futbolista</span>
-                                <h1 class="display-5 fw-bolder mb-4">Joan García</h1>
+                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+                                    <div>
+                                        <h1 class="display-5 fw-bolder mb-1">Joan García</h1>
+                                        <div class="text-warning" role="img" aria-label="4,5 de 5 estrellas">
+                                            <i class="bi bi-star-fill" aria-hidden="true"></i>
+                                            <i class="bi bi-star-fill" aria-hidden="true"></i>
+                                            <i class="bi bi-star-fill" aria-hidden="true"></i>
+                                            <i class="bi bi-star-fill" aria-hidden="true"></i>
+                                            <i class="bi bi-star-half" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button type="button" class="btn btn-outline-primary">
+                                            <i class="bi bi-pencil me-1"></i>Editar
+                                        </button>
+                                        <button type="button" class="btn btn-outline-danger">
+                                            <i class="bi bi-trash me-1"></i>Borrar
+                                        </button>
+                                    </div>
+                                </div>
 
                                 <div class="row g-4">
                                     <div class="col-md-6">
@@ -115,6 +98,27 @@
                         </div>
                     </div>
                 </div>
+
+                <section class="mt-5" aria-labelledby="comments-title">
+                    <h2 id="comments-title" class="h3 mb-4">Comentarios</h2>
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <article>
+                                <h3 class="h6 mb-2">Anónimo</h3>
+                                <p class="mb-0">Como experto en futbol es mejor jugador Zak. Nadie mas arrasaria como el en Masara</p>
+                            </article>
+                        </div>
+                    </div>
+                    <form class="form">
+                        <h3 class="h5 mb-3">Añadir un comentario</h3>
+                        <div class="mb-3">
+                            <label for="comment" class="form-label">Escribe un comentario:</label>
+                            <textarea class="form-control" id="comment" name="comment" rows="3"
+                                placeholder="Escribe tu comentario"></textarea>
+                        </div>
+                        <button type="button" class="btn btn-primary">Publicar comentario</button>
+                    </form>
+                </section>
             </div>
         </section>
 
