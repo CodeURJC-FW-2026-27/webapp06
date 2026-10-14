@@ -38,8 +38,8 @@ Each card will be divided according to its `league`.
 You can filter each card by `player_name`.
 
 <img width="948" height="503" alt="image" src="https://github.com/user-attachments/assets/c073372a-3f07-4d5d-91bf-63957a9436ae" />
-<img width="947" height="502" alt="image" src="https://github.com/user-attachments/assets/cda95131-9a7a-4975-89dc-3e6499a1a92e" />
-<img width="942" height="498" alt="image" src="https://github.com/user-attachments/assets/d50fd5fc-60d4-4772-9277-dfe035fa68c7" />
+<img width="944" height="501" alt="image" src="https://github.com/user-attachments/assets/20ff1a21-be34-4442-ad70-4969826e7d56" />
+<img width="944" height="501" alt="image" src="https://github.com/user-attachments/assets/c3c1463b-7d9e-4daf-89c6-54b0c8bd8b1b" />
 <img width="949" height="503" alt="image" src="https://github.com/user-attachments/assets/a1650e84-362c-4f49-a8e0-18f1b78580bf" />
 <img width="941" height="499" alt="image" src="https://github.com/user-attachments/assets/290fbf1c-d634-4a42-a26f-9d0b4bb2b943" />
 <img width="1396" height="256" alt="Formulario-pagina-detalle" src="https://github.com/user-attachments/assets/acca3565-f0b2-4fe6-8f7f-a839f1bb97be" />
@@ -56,7 +56,7 @@ Javi :
   
 Carlos :
   Description  : Participado en detalle.html
-  Significant commits : https://github.com/CodeURJC-FW-2026-27/webapp06/commit/main#diff-65671c71daad474bc4f336ca3eb8a37c85b4b39fa84182254a327fa5286b593c
+  Significant commits : https://github.com/CodeURJC-FW-2026-27/webapp06/commit/6adb200a68d7ed014147818ce33cbbc65c55489e
   Relevant Files : detalle.html
   
 Sara :
