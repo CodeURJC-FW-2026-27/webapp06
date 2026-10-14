@@ -10833,12 +10833,13 @@ textarea.form-control-lg {
 <<<<<<< HEAD
 =======
 @media (prefers-reduced-motion: reduce) {
+
   .card {
-    transition: none;
+    transition:none;
   }
 
   .card:hover {
-    transform: none;
+    transform:none;
   }
 }
 
