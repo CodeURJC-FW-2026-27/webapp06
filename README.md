@@ -51,7 +51,7 @@ Sara :
   Significant commits :
   Relevant Files : 
 Diego : 
-  Description  :
-  Significant commits :
-  Relevant Files : 
+  Description  : Creation page and details
+  Significant commits : https://github.com/CodeURJC-FW-2026-27/webapp06/commit/a8ff2671caedd371237ae59b930b91340b5dd4b5, https://github.com/CodeURJC-FW-2026-27/webapp06/commit/5f542cbb9f219f063332cd2fb21898a97cdea8f4
+  Relevant Files : newelem.html
   
