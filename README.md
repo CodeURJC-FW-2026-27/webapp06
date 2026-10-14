@@ -69,7 +69,9 @@ Sara :
   Relevant Files : searchbar.css
   
 Diego : 
-  Description  : Creation page and details
-  Significant commits : https://github.com/CodeURJC-FW-2026-27/webapp06/commit/a8ff2671caedd371237ae59b930b91340b5dd4b5, https://github.com/CodeURJC-FW-2026-27/webapp06/commit/5f542cbb9f219f063332cd2fb21898a97cdea8f4
-  Relevant Files : newelem.html
+  Description  : Creation page, creation review and details
+  
+  Significant commits : a8ff2671caedd371237ae59b930b91340b5dd4b5, 5f542cbb9f219f063332cd2fb21898a97cdea8f4, 0a03d4f385f4b116bf5f92c38996ca90ee71e15b, 89bb9aa237e6721306081a2a9a851711bfb1bd9d
+  
+  Relevant Files : newelem.html, newelem.html
   
