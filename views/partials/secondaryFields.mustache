@@ -1,0 +1,29 @@
+{{! Campos del formulario de reseña. Se usa en detail.mustache (crear) y en secondaryForm.mustache (editar).
+    Contexto: values {nickname, review_date, opinion, rating}, ratings [{value,label,selected}], today (YYYY-MM-DD) }}
+<div class="row g-3 mb-3">
+    <div class="col-md-6">
+        <label for="nickname" class="form-label">Nombre de usuario:</label>
+        <input type="text" class="form-control" id="nickname" name="nickname"
+            placeholder="Nombre de usuario" value="{{values.nickname}}"
+            minlength="2" maxlength="30" required />
+    </div>
+    <div class="col-md-3">
+        <label for="review_date" class="form-label">Fecha de la reseña:</label>
+        <input type="date" class="form-control" id="review_date" name="review_date"
+            value="{{values.review_date}}" max="{{today}}" required />
+    </div>
+    <div class="col-md-3">
+        <label for="rating" class="form-label">Puntuación:</label>
+        <select class="form-select" id="rating" name="rating" required>
+            <option value="" disabled {{^values.rating}}selected{{/values.rating}}>Selecciona</option>
+            {{#ratings}}
+            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+            {{/ratings}}
+        </select>
+    </div>
+</div>
+<div class="mb-3">
+    <label for="opinion" class="form-label">Reseña:</label>
+    <textarea class="form-control" id="opinion" name="opinion" rows="3"
+        placeholder="Escribe tu comentario" minlength="10" maxlength="500" required>{{values.opinion}}</textarea>
+</div>
