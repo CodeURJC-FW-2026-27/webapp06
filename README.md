@@ -48,7 +48,7 @@ You can filter each card by `player_name`.
 
 
 
-Practica 1.
+PRÁCTICA 1.
 
 Javi :
   Description  : I set up the project from the Bootstrap template (styles, favicon, scripts), added the example player images and implemented the main page (`index.html`): a Bootstrap grid with 9 player cards that link to the detail page, plus the "Crear nuevo elemento" button.
@@ -79,4 +79,13 @@ Diego :
   Significant commits : a8ff2671caedd371237ae59b930b91340b5dd4b5, 5f542cbb9f219f063332cd2fb21898a97cdea8f4, 0a03d4f385f4b116bf5f92c38996ca90ee71e15b, 89bb9aa237e6721306081a2a9a851711bfb1bd9d
   
   Relevant Files : newelem.html, newcomen.html
+
+  PRÁCTICA 2.
+
+Sara :
+
+  Description : I implemented the player creation and editing routes (GET/POST), the reusable Mustache form view, image upload and cleanup using Multer, and client/server-side data validation.
   
+  Significant commits : a96b0da, fbde250, 93382fc, 946a89a, 9630901, e5bdec7
+  
+  Relevant Files : routes/playerRouter.js, views/playerForm.mustache
