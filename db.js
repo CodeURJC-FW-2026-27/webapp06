@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * db.js – MongoDB connection module.
  *

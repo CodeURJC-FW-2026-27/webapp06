@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * utils/validator.js – Server-side validation of the forms.
  *

@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * routes/playerRouter.js – Pages of the main entity (LaLiga Player).
  *

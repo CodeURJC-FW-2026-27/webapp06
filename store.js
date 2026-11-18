@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * store.js – Data access layer of LEAGUES MARKET.
  *

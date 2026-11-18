@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * routes/homeRouter.js – Home page: the list of players (main entity).
  *

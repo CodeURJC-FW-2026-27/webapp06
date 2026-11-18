@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * utils/viewHelpers.js – Helpers shared by the routers to prepare data for
  * the Mustache views and to render the common confirmation and error pages.

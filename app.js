@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * app.js – Express server entry point for LEAGUES MARKET.
  *

@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * seed.js – Loads the demo data every time the application starts.
  *

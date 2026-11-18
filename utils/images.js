@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * utils/images.js – Storage of the player images.
  *

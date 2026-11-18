@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * routes/reviewRouter.js – Reviews of a player (secondary entity, LaLiga
  * Card Review). They are listed, and created, on the player's detail page.
