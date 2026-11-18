@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="Formulario para crear un nuevo jugador" />
+    <meta name="description" content="Player creation and editing form" />
     <meta name="author" content="Grupo 06" />
     <title>LEAGUES MARKET - {{formTitle}}</title>
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
@@ -29,27 +29,32 @@
                             <form class="form" action="{{action}}" method="POST"
                                 enctype="multipart/form-data">
                                 <div class="mb-3">
-                                    <label for="player_name" class="form-label">Nombre del jugador:</label>
+                                    <label for="player_name" class="form-label">Player name:</label>
                                     <input type="text" class="form-control" id="player_name" name="player_name"
-                                        placeholder="Nombre del jugador" value="{{player.player_name}}" />
+                                        placeholder="Player name" value="{{player.player_name}}"
+                                        minlength="2" maxlength="80" pattern="[\p{Lu}].*"
+                                        title="Start with an uppercase letter." required />
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="date_of_birth" class="form-label">Fecha de nacimiento:</label>
+                                    <label for="date_of_birth" class="form-label">Date of birth:</label>
                                     <input type="date" class="form-control" id="date_of_birth" name="date_of_birth"
-                                        value="{{player.date_of_birth}}" />
+                                        value="{{player.date_of_birth}}" min="{{minBirthDate}}"
+                                        max="{{maxBirthDate}}" required />
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="team" class="form-label">Equipo del jugador:</label>
+                                    <label for="team" class="form-label">Team:</label>
                                     <input type="text" class="form-control" id="team" name="team"
-                                        placeholder="Equipo del jugador" value="{{player.team}}" />
+                                        placeholder="Team" value="{{player.team}}"
+                                        minlength="2" maxlength="60" pattern="[\p{Lu}].*"
+                                        title="Start with an uppercase letter." required />
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="position" class="form-label">Categoría (posición del jugador):</label>
-                                    <select class="form-select" id="position" name="position">
-                                        <option value="" {{^hasPosition}}selected{{/hasPosition}}>Selecciona una categoría</option>
+                                    <label for="position" class="form-label">Player position:</label>
+                                    <select class="form-select" id="position" name="position" required>
+                                        <option value="" disabled {{^hasPosition}}selected{{/hasPosition}}>Select a position</option>
                                         {{#positionOptions}}
                                         <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
                                         {{/positionOptions}}
@@ -57,48 +62,55 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="league" class="form-label">Liga:</label>
+                                    <label for="league" class="form-label">League:</label>
                                     <input type="text" class="form-control" id="league" name="league"
-                                        placeholder="Liga" value="{{player.league}}" />
+                                        placeholder="League" value="{{player.league}}"
+                                        minlength="2" maxlength="60" pattern="[\p{Lu}].*"
+                                        title="Start with an uppercase letter." required />
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="description" class="form-label">Descripción del jugador:</label>
+                                    <label for="description" class="form-label">Player description:</label>
                                     <textarea class="form-control" id="description" name="description" rows="3"
-                                        placeholder="Escribe una descripción del jugador">{{player.description}}</textarea>
+                                        placeholder="Enter a player description"
+                                        minlength="20" maxlength="2000" required>{{player.description}}</textarea>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="image" class="form-label">Imagen del jugador:</label>
+                                    <label for="image" class="form-label">Player image:</label>
                                     {{#hasImage}}
                                     <div class="mb-2">
                                         <img src="{{player.image}}" alt="{{player.player_name}}"
                                             class="img-thumbnail" style="max-height: 180px" />
-                                        <p class="form-text mb-0">Si no seleccionas otra imagen, se conservará la actual.</p>
+                                        <p class="form-text mb-0">The current image will be kept if you do not choose another one.</p>
                                     </div>
                                     {{/hasImage}}
                                     <input type="file" class="form-control" id="image" name="image"
-                                        accept="image/*" />
+                                        accept="image/*" {{^hasImage}}required{{/hasImage}} />
+                                    <div class="form-text">Accepted format: images (image/*). Maximum size: 5 MB.</div>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="photographer" class="form-label">Fotógrafo:</label>
+                                    <label for="photographer" class="form-label">Photographer:</label>
                                     <input type="text" class="form-control" id="photographer" name="photographer"
-                                        placeholder="Nombre del fotógrafo" value="{{player.photographer}}" />
+                                        placeholder="Photographer name" value="{{player.photographer}}"
+                                        minlength="2" maxlength="80" pattern="[\p{Lu}].*"
+                                        title="Start with an uppercase letter." required />
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="price" class="form-label">Precio:</label>
+                                    <label for="price" class="form-label">Price:</label>
                                     <div class="input-group">
                                         <span class="input-group-text">€</span>
                                         <input type="number" class="form-control" id="price" name="price"
-                                            placeholder="Precio" value="{{player.price}}" />
+                                            placeholder="Price" value="{{player.price}}" min="0"
+                                            max="999999999" step="1" required />
                                     </div>
                                 </div>
 
                                 <div class="d-flex gap-2">
-                                    <a href="/" class="btn btn-danger">
-                                        <i class="bi bi-x-circle me-1"></i> Cancelar
+                                    <a href="{{#isEdit}}/player/{{player.id}}{{/isEdit}}{{^isEdit}}/{{/isEdit}}" class="btn btn-danger">
+                                        <i class="bi bi-x-circle me-1"></i> Cancel
                                     </a>
                                     <button type="submit" class="btn btn-success">
                                         <i class="bi bi-save me-1"></i> {{submitLabel}}

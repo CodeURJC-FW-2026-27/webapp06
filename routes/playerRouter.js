@@ -76,24 +76,37 @@ function getRetryUrl(req) {
         : '/player/new';
 }
 
+function dateYearsAgo(years, now = new Date()) {
+    const year = now.getFullYear() - years;
+    const month = now.getMonth();
+    const day = Math.min(now.getDate(), new Date(year, month + 1, 0).getDate());
+    return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+}
+
 function handleImageUpload(req, res, next) {
     upload.single('image')(req, res, (error) => {
         if (!error) {
             return next();
         }
 
-        if (!(error instanceof multer.MulterError) && error.code !== 'INVALID_IMAGE_TYPE') {
-            return next(error);
+        let status = 400;
+        let message;
+        if (error.code === 'INVALID_IMAGE_TYPE') {
+            message = 'Only image files are allowed.';
+        } else if (error instanceof multer.MulterError && error.code === 'LIMIT_FILE_SIZE') {
+            message = `The image must not exceed ${PLAYER_LIMITS.IMAGE_MAX_BYTES / (1024 * 1024)} MB.`;
+        } else if (error instanceof multer.MulterError && error.code === 'LIMIT_UNEXPECTED_FILE') {
+            message = 'Only one image file can be uploaded.';
+        } else if (error instanceof multer.MulterError) {
+            message = 'The image upload request is invalid.';
+        } else {
+            console.error('Could not upload the player image:', error);
+            status = 500;
+            message = 'The image could not be uploaded due to a server error.';
         }
 
-        const message = error.code === 'LIMIT_FILE_SIZE'
-            ? `The image must not exceed ${PLAYER_LIMITS.IMAGE_MAX_BYTES / (1024 * 1024)} MB.`
-            : error.code === 'INVALID_IMAGE_TYPE'
-                ? 'Only image files are allowed.'
-                : 'Only one image file can be uploaded.';
-
         return renderError(res, {
-            status: 400,
+            status,
             title: 'Image upload error',
             message,
             errors: [message],
@@ -173,28 +186,37 @@ module.exports = function createPlayerRouter(store) {
     const router = express.Router();
 
     const positionOptions = (selectedPosition) => [
-        { value: 'portero', label: 'Portero' },
-        { value: 'defensa', label: 'Defensa' },
-        { value: 'centrocampista', label: 'Centrocampista' },
-        { value: 'delantero', label: 'Delantero' }
+        { value: 'portero', label: 'Goalkeeper' },
+        { value: 'defensa', label: 'Defender' },
+        { value: 'centrocampista', label: 'Midfielder' },
+        { value: 'delantero', label: 'Forward' }
     ].map((position) => ({
         ...position,
         selected: position.value === selectedPosition
     }));
 
     const renderForm = (res, player, playerId) => {
-        const isEdit = Boolean(player);
-        const options = positionOptions(player && player.position);
+        const formPlayer = player
+            ? {
+                ...player,
+                id: String(player.id ?? player._id ?? playerId)
+            }
+            : null;
+        const isEdit = Boolean(formPlayer);
+        const options = positionOptions(formPlayer && formPlayer.position);
+        const now = new Date();
 
         return res.render('playerForm', {
-            player,
+            player: formPlayer,
             isEdit,
-            formTitle: isEdit ? 'Editar Jugador' : 'Crear Nuevo Jugador',
-            submitLabel: isEdit ? 'Guardar cambios' : 'Guardar',
+            formTitle: isEdit ? 'Edit Player' : 'Create New Player',
+            submitLabel: isEdit ? 'Save changes' : 'Save',
             action: isEdit ? `/player/${encodeURIComponent(playerId)}/edit` : '/player',
             hasPosition: options.some((position) => position.selected),
             positionOptions: options,
-            hasImage: Boolean(player && player.image)
+            hasImage: Boolean(formPlayer && formPlayer.image),
+            minBirthDate: dateYearsAgo(PLAYER_LIMITS.AGE_MAX, now),
+            maxBirthDate: dateYearsAgo(PLAYER_LIMITS.AGE_MIN, now)
         });
     };
 
@@ -267,10 +289,10 @@ module.exports = function createPlayerRouter(store) {
 
         return res.render('confirmation', {
             ok: true,
-            title: 'Jugador creado',
-            message: `El jugador "${player.player_name}" se ha creado correctamente.`,
+            title: 'Player created',
+            message: `Player "${player.player_name}" was created successfully.`,
             backUrl: '/',
-            backLabel: 'Volver a la página principal'
+            backLabel: 'Back to the home page'
         });
     }));
 
@@ -338,12 +360,12 @@ module.exports = function createPlayerRouter(store) {
 
         return res.render('confirmation', {
             ok: true,
-            title: 'Jugador actualizado',
+            title: 'Player updated',
             message: cleanupWarning
                 ? 'The player was updated, but the previous image could not be removed.'
-                : `El jugador "${updatedPlayer.player_name}" se ha actualizado correctamente.`,
+                : `Player "${updatedPlayer.player_name}" was updated successfully.`,
             backUrl: `/player/${encodeURIComponent(id)}`,
-            backLabel: 'Volver al jugador'
+            backLabel: 'Back to the player'
         });
     }));
 
