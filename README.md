@@ -207,6 +207,10 @@ Review: nickname `Tester`, today's date, rating `4 - Muy buena`, opinion
 - **Sample images**: `data/images/`, copied into `uploads/` on every start by
   `seed.js`. `uploads/` and `node_modules/` are listed in `.gitignore`.
 
+## Video
+
+https://youtu.be/THEKcu_f1tY
+
 ---
 
 ## PRÁCTICA 1
