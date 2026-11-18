@@ -1,20 +1,23 @@
 'use strict';
 
 /**
- * routes/mainRouter.js – Home-page route (GET /).
+ * routes/mainRouter.js – Main application router.
  *
- * Renders the main entity list (LaLiga players) from MongoDB through
- * index.mustache.  Supports:
- *   - Pagination   (6 cards per page, ?page=N)
- *   - Name search  (?search=...)   – case-insensitive regex on player_name
- *   - Category     (?position=...) – exact match on the position field
+ * Implements:
+ *   - GET /: Home-page route rendering the main entity list (LaLiga players)
+ *     from MongoDB through index.mustache. Supports 6-item pagination (?page=N),
+ *     diacritic-flexible player_name search (?search=...), and position category
+ *     filtering (?position=...), preserving active filters across pagination links.
  *
- * Active search/category parameters are preserved in every pagination link.
- *
- * Person 1 scope only: does NOT implement create, detail, edit, or delete.
+ * Reconciles router dependencies:
+ *   - createMainRouter(db)               -> returns the MongoDB-backed home-page router (GET /).
+ *   - createMainRouter(store)            -> returns the store-backed player detail and deletion router
+ *                                           (delegates to routes/playerDetailRouter.js).
+ *   - createMainRouter({ db, store })    -> mounts both routers together.
  */
 
 const express = require('express');
+const createPlayerDetailRouter = require('./playerDetailRouter');
 
 const ITEMS_PER_PAGE = 6;
 
@@ -43,12 +46,12 @@ function toDiacriticRegex(str) {
 const VALID_POSITIONS = ['Portero', 'Defensa', 'Centrocampista', 'Delantero'];
 
 /**
- * Factory: receives the database instance and returns the router.
+ * Factory: receives the database instance and returns the home-page router (GET /).
  *
  * @param {import('mongodb').Db} db
  * @returns {import('express').Router}
  */
-module.exports = function createMainRouter(db) {
+function createHomeRouter(db) {
     const router = express.Router();
     const players = db.collection('players');
 
@@ -154,4 +157,38 @@ module.exports = function createMainRouter(db) {
     });
 
     return router;
+}
+
+/**
+ * Reconciled router factory:
+ *   - If called with a MongoDB Db instance (has .collection), returns the home-page router.
+ *   - If called with a store object (has .getPlayer), returns the detail and deletion router.
+ *   - If called with an object containing { db, store }, mounts both.
+ *
+ * @param {import('mongodb').Db|object} dbOrStore
+ * @returns {import('express').Router}
+ */
+module.exports = function createMainRouter(dbOrStore) {
+    if (!dbOrStore) {
+        throw new Error('createMainRouter requires a MongoDB Db instance or a store adapter');
+    }
+
+    // Combined object { db, store }
+    if (dbOrStore.db && dbOrStore.store) {
+        const router = express.Router();
+        router.use(createHomeRouter(dbOrStore.db));
+        router.use(createPlayerDetailRouter(dbOrStore.store));
+        return router;
+    }
+
+    // Direct MongoDB Db instance
+    if (typeof dbOrStore.collection === 'function') {
+        return createHomeRouter(dbOrStore);
+    }
+
+    // Store adapter
+    return createPlayerDetailRouter(dbOrStore);
 };
+
+module.exports.createHomeRouter = createHomeRouter;
+module.exports.createPlayerDetailRouter = createPlayerDetailRouter;

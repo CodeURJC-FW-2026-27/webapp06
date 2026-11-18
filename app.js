@@ -58,18 +58,30 @@ app.use(express.urlencoded({ extended: false }));
         app.use(createMainRouter(db));
 
         /*
-         * INTEGRATION NOTE – Person 4 (secondaryRouter)
-         * ---------------------------------------------
-         * secondaryRouter.js exports a factory that expects a `store` object
-         * with methods: getPlayer, getReviews, getReview, addReview,
-         * updateReview, deleteReview.
+         * INTEGRATION NOTE – Teammates' Store-backed Routers
+         * --------------------------------------------------
+         * Person 2 (playerRouter), Person 3 (playerDetailRouter / mainRouter(store)),
+         * and Person 4 (secondaryRouter) export router factories that require a
+         * `store` data-access adapter implementing:
+         *   - getPlayers()
+         *   - getPlayer(playerId)
+         *   - addPlayer(player)
+         *   - updatePlayer(playerId, player)
+         *   - deletePlayer(playerId)
+         *   - deleteReviewsByPlayer(playerId)
+         *   - getPlayerByImage(imagePath, excludeId)
+         *   - getReviews(playerId)
+         *   - getReview(playerId, reviewId)
+         *   - addReview(playerId, review)
+         *   - updateReview(playerId, reviewId, f)
+         *   - deleteReview(playerId, reviewId)
          *
-         * Those store methods are not implemented yet (they belong to the
-         * teammates who own the detail/CRUD features).  Once a store module
-         * is created, mount the secondary router like this:
+         * Since those store methods are not implemented yet, mounting them with incomplete
+         * dependencies or fake stubs is strictly avoided. Once a store module is created:
          *
-         *   const createSecondaryRouter = require('./routes/secondaryRouter');
-         *   app.use(createSecondaryRouter(store));
+         *   app.use(require('./routes/playerRouter')(store));
+         *   app.use(require('./routes/playerDetailRouter')(store));
+         *   app.use(require('./routes/secondaryRouter')(store));
          */
 
         app.listen(PORT, () => {
