@@ -1,0 +1,14 @@
+{
+  "name": "webapp06",
+  "version": "1.0.0",
+  "description": "LEAGUES MARKET – LaLiga player card marketplace",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "mongodb": "^6.12.0",
+    "mustache-express": "^1.3.2"
+  }
+}

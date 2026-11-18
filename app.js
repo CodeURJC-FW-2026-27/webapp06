@@ -1,0 +1,75 @@
+'use strict';
+
+/**
+ * app.js – Express server entry point for LEAGUES MARKET.
+ *
+ * Configures:
+ *   - Mustache as the view engine (views/ directory, partials/ subdirectory).
+ *   - Static files served from the project root (css/, js/, images/, assets/).
+ *   - URL-encoded body parsing for form submissions.
+ *   - MongoDB connection + seed on first run.
+ *   - Main-entity home page router (Person 1).
+ *
+ * Secondary-entity router (Person 4) is NOT mounted here because it depends
+ * on a `store` object whose methods (getPlayer, getReviews, etc.) are not yet
+ * implemented.  See INTEGRATION NOTE below.
+ */
+
+const express        = require('express');
+const mustacheExpress = require('mustache-express');
+const path           = require('path');
+
+const { connectDB }  = require('./db');
+const { seedIfEmpty } = require('./seed');
+const createMainRouter = require('./routes/mainRouter');
+
+const PORT = process.env.PORT || 3000;
+const app  = express();
+
+// --- View engine -----------------------------------------------------------
+app.engine('mustache', mustacheExpress(
+    path.join(__dirname, 'views', 'partials') // partials directory
+));
+app.set('view engine', 'mustache');
+app.set('views', path.join(__dirname, 'views'));
+
+// --- Static assets ----------------------------------------------------------
+// Serve CSS, JS, images and other static files from the project root so that
+// existing paths like /css/styles.css, /images/..., /assets/favicon.ico work.
+app.use(express.static(path.join(__dirname)));
+
+// --- Body parser (form data) ------------------------------------------------
+app.use(express.urlencoded({ extended: false }));
+
+// --- Start ------------------------------------------------------------------
+(async () => {
+    try {
+        const db = await connectDB();
+        await seedIfEmpty(db);
+
+        // Person 1 – home page, search, pagination
+        app.use(createMainRouter(db));
+
+        /*
+         * INTEGRATION NOTE – Person 4 (secondaryRouter)
+         * ---------------------------------------------
+         * secondaryRouter.js exports a factory that expects a `store` object
+         * with methods: getPlayer, getReviews, getReview, addReview,
+         * updateReview, deleteReview.
+         *
+         * Those store methods are not implemented yet (they belong to the
+         * teammates who own the detail/CRUD features).  Once a store module
+         * is created, mount the secondary router like this:
+         *
+         *   const createSecondaryRouter = require('./routes/secondaryRouter');
+         *   app.use(createSecondaryRouter(store));
+         */
+
+        app.listen(PORT, () => {
+            console.log(`LEAGUES MARKET listening on http://localhost:${PORT}`);
+        });
+    } catch (err) {
+        console.error('Failed to start server:', err);
+        process.exit(1);
+    }
+})();

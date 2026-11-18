@@ -48,6 +48,75 @@ You can filter each card by `player_name`.
 
 
 
+---
+
+## **Setup & Run (Práctica 2)**
+
+### Prerequisites
+- **Node.js** (v18 or later, tested on Node v26)
+- **MongoDB Community Server** (v9.0+, listening on `127.0.0.1:27017`)
+
+### MongoDB Service Management (Windows)
+MongoDB runs as a standard Windows service (`MongoDB`):
+- **Check status:**
+  ```powershell
+  Get-Service -Name MongoDB
+  ```
+- **Start service:**
+  ```powershell
+  Start-Service -Name MongoDB
+  ```
+- **Stop service:**
+  ```powershell
+  Stop-Service -Name MongoDB
+  ```
+- **Configuration file:** `C:\Program Files\MongoDB\Server\9.0\bin\mongod.cfg` (bound strictly to `127.0.0.1:27017` for local-only connections).
+
+### Installation
+```bash
+npm install
+```
+
+### Start the server
+```bash
+npm start
+```
+The application will be available at **http://localhost:3000**.
+
+On first run the database is seeded automatically with the 9 example players
+and 2 sample reviews.  Subsequent restarts do not duplicate data.
+
+### Environment variables (optional)
+| Variable   | Default                      | Description            |
+|------------|------------------------------|------------------------|
+| `PORT`     | `3000`                       | Server listening port  |
+| `MONGO_URI`| `mongodb://localhost:27017`  | MongoDB connection URI |
+| `MONGO_DB` | `leaguesmarket`              | Database name          |
+
+---
+
+## **Project file reference (Práctica 2)**
+
+| File | Responsibility |
+|------|----------------|
+| `package.json` | npm dependencies (Express, Mustache, MongoDB) and `npm start` script. |
+| `app.js` | Express server entry point: view engine, static assets, body parser, MongoDB init, route mounting. |
+| `db.js` | MongoDB connection helper (`connectDB`). |
+| `seed.js` | Inserts the 9 example players and 2 reviews when the database is empty. |
+| `routes/mainRouter.js` | `GET /` – home page with pagination (6/page), name search, and position category filter. |
+| `routes/secondaryRouter.js` | *(Person 4 – unchanged)* Secondary-entity CRUD routes. |
+| `utils/validator.js` | *(Person 4 – unchanged)* Review validation logic. |
+| `views/index.mustache` | Home page template: player cards grid, pagination, search/category state. |
+| `views/partials/header.mustache` | Shared header partial: search form + category buttons with active state. |
+| `views/partials/footer.mustache` | Shared footer partial. |
+| `views/detail.mustache` | *(Person 4 – unchanged)* Player detail page template. |
+| `views/secondaryForm.mustache` | *(Person 4 – unchanged)* Review edit form template. |
+| `views/secondaryResult.mustache` | *(Person 4 – unchanged)* Review operation result template. |
+| `views/partials/secondaryFields.mustache` | *(Person 4 – unchanged)* Reusable review form fields partial. |
+| `.gitignore` | Ignores `node_modules/` and `uploads/`. |
+
+---
+
 Practica 1.
 
 Javi :

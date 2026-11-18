@@ -1,0 +1,39 @@
+{{! views/partials/header.mustache – Shared header with search bar and category buttons.
+     Expects: search (string), position (string), categories [{label,value,active}],
+              allActive (boolean), allUrl (string). }}
+<header class="bg-dark py-4">
+    <div class="container px-4 px-lg-5 my-3">
+        <div class="header-content text-white">
+            <a href="/" class="header-brand text-white text-decoration-none">
+                <h1 class="display-4 fw-bolder">LEAGUES MARKET</h1>
+            </a>
+            <div class="header-tools">
+                <form action="/" method="GET" class="d-flex justify-content-end">
+                    {{! Preserve the active category while searching }}
+                    {{#position}}
+                    <input type="hidden" name="position" value="{{position}}" />
+                    {{/position}}
+                    <div class="input-group search-container">
+                        <input type="search" name="search" class="form-control search-input"
+                            placeholder="Buscar jugadores, equipos..." aria-label="Buscar"
+                            value="{{search}}" />
+                        <button class="btn btn-primary search-btn" type="submit">Buscar</button>
+                    </div>
+                </form>
+                <div class="category-list mt-4 d-flex flex-wrap align-items-center gap-2">
+                    <span class="category-label text-white-50 me-1">Categorías:</span>
+                    <a href="{{#allUrl}}{{{allUrl}}}{{/allUrl}}{{^allUrl}}/{{/allUrl}}"
+                       class="btn btn-sm category-badge {{#allActive}}btn-light{{/allActive}}{{^allActive}}btn-outline-light{{/allActive}}">
+                        Todas
+                    </a>
+                    {{#categories}}
+                    <a href="{{{url}}}"
+                       class="btn btn-sm category-badge {{#active}}btn-light{{/active}}{{^active}}btn-outline-light{{/active}}">
+                        {{label}}
+                    </a>
+                    {{/categories}}
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
