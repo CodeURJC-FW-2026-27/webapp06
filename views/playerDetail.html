@@ -1,130 +1,123 @@
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="Detalle del jugador" />
-        <meta name="author" content="Grupo 06" />
-        <title>LEAGUES MARKET - {{player.player_name}}</title>
-        <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
-        <link href="/css/styles.css" rel="stylesheet" />
-        <link href="/css/searchbar.css" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet" />
-    </head>
-    <body class="player-detail-page d-flex flex-column min-vh-100">
-        {{> header}}
 
-        <section class="py-5 flex-grow-1">
-            <div class="container px-4 px-lg-5">
-                <a class="btn btn-outline-dark mb-3" href="/">
-                    <i class="bi bi-arrow-left me-2"></i>Volver a la página principal
-                </a>
-                <div class="player-detail-card">
-                    <div class="row g-0 align-items-stretch">
-                        <div class="col-lg-5">
-                            <figure class="player-detail-image-container mb-0">
-                                <img class="player-detail-image" src="{{player.image}}" alt="{{player.player_name}}" />
-                                <figcaption class="photographer-credit">Fotógrafo: {{player.photographer}}</figcaption>
-                            </figure>
-                            <div class="player-price p-4">
-                                <p class="text-muted mb-2">Precio</p>
-                                <h2 class="fw-bolder mb-0">€ {{player.price}}</h2>
-                            </div>
+<head>
+    {{> head}}
+    <title>LEAGUES MARKET - {{player.player_name}}</title>
+</head>
+
+<body class="player-detail-page d-flex flex-column min-vh-100">
+    {{> header}}
+
+    <main class="flex-grow-1 py-5">
+        <div class="container px-4 px-lg-5">
+            <a class="btn btn-outline-dark mb-3" href="/">
+                <i class="bi bi-arrow-left me-2"></i>Volver a la página principal
+            </a>
+            <div class="player-detail-card">
+                <div class="row g-0 align-items-stretch">
+                    <div class="col-lg-5">
+                        <figure class="player-detail-image-container mb-0">
+                            <img class="player-detail-image" src="/uploads/{{player.image}}" alt="{{player.player_name}}" />
+                            <figcaption class="photographer-credit">Fotógrafo: {{player.photographer}}</figcaption>
+                        </figure>
+                        <div class="player-price p-4">
+                            <p class="text-muted mb-2">Precio</p>
+                            <h2 class="fw-bolder mb-0">€ {{player.price_label}}</h2>
                         </div>
+                    </div>
 
-                        <div class="col-lg-7">
-                            <div class="p-4 p-lg-5">
-                                <span class="badge bg-dark rounded-pill mb-3">Futbolista</span>
-                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
-                                    <h1 class="display-5 fw-bolder mb-1">{{player.player_name}}</h1>
-                                    <div class="d-flex gap-2">
-                                        <a href="/player/{{player.id}}/edit" class="btn btn-outline-primary">
-                                            <i class="bi bi-pencil me-1"></i>Editar
-                                        </a>
-                                        <form action="/player/{{player.id}}/delete" method="POST">
-                                            <button type="submit" class="btn btn-outline-danger">
-                                                <i class="bi bi-trash me-1"></i>Borrar
-                                            </button>
-                                        </form>
-                                    </div>
+                    <div class="col-lg-7">
+                        <div class="p-4 p-lg-5">
+                            <span class="badge bg-dark rounded-pill mb-3">Futbolista</span>
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+                                <h1 class="display-5 fw-bolder mb-1">{{player.player_name}}</h1>
+                                <div class="d-flex gap-2">
+                                    <a href="/player/{{player.id}}/edit" class="btn btn-outline-primary">
+                                        <i class="bi bi-pencil me-1"></i>Editar
+                                    </a>
+                                    <form action="/player/{{player.id}}/delete" method="POST">
+                                        <button type="submit" class="btn btn-outline-danger">
+                                            <i class="bi bi-trash me-1"></i>Borrar
+                                        </button>
+                                    </form>
                                 </div>
-
-                                <div class="row g-4">
-                                    <div class="col-md-3">
-                                        <p class="info-label">Equipo</p>
-                                        <p class="info-value">{{player.team}}</p>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <p class="info-label">Posición</p>
-                                        <p class="info-value">{{player.position}}</p>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <p class="info-label">Liga</p>
-                                        <p class="info-value">{{player.league}}</p>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <p class="info-label">Fecha de nacimiento</p>
-                                        <p class="info-value">{{player.date_of_birth_label}}</p>
-                                    </div>
-                                </div>
-
-                                <hr class="my-4" />
-
-                                <p class="text-secondary mb-0">{{player.description}}</p>
                             </div>
+
+                            <div class="row g-4">
+                                <div class="col-md-3">
+                                    <p class="info-label">Equipo</p>
+                                    <p class="info-value">{{player.team}}</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <p class="info-label">Posición</p>
+                                    <p class="info-value">{{player.position}}</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <p class="info-label">Liga</p>
+                                    <p class="info-value">{{player.league}}</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <p class="info-label">Fecha de nacimiento</p>
+                                    <p class="info-value">{{player.date_of_birth_label}}</p>
+                                </div>
+                            </div>
+
+                            <hr class="my-4" />
+
+                            <p class="text-secondary mb-0">{{player.description}}</p>
                         </div>
                     </div>
                 </div>
-
-                <section class="mt-5" aria-labelledby="comments-title">
-                    <h2 id="comments-title" class="h3 mb-4">Comentarios</h2>
-
-                    {{#reviews}}
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <article>
-                                <header class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
-                                    <div class="d-flex flex-wrap align-items-center gap-2">
-                                        <h3 class="h6 mb-0">{{nickname}}</h3>
-                                        <time class="text-secondary small" datetime="{{review_date}}">{{date_label}}</time>
-                                        <span class="text-secondary small">
-                                            Valoración: <data value="{{rating}}">{{rating_label}}</data>
-                                        </span>
-                                    </div>
-                                    <div class="d-flex gap-2">
-                                        <a href="/player/{{player.id}}/reviews/{{id}}/edit" class="btn btn-sm btn-outline-primary">
-                                            <i class="bi bi-pencil me-1"></i>Editar
-                                        </a>
-                                        <form action="/player/{{player.id}}/reviews/{{id}}/delete" method="POST">
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                <i class="bi bi-trash me-1"></i>Borrar
-                                            </button>
-                                        </form>
-                                    </div>
-                                </header>
-                                <p class="mb-0">{{opinion}}</p>
-                            </article>
-                        </div>
-                    </div>
-                    {{/reviews}}
-                    {{^reviews}}
-                    <p class="text-secondary">Todavía no hay comentarios para este jugador.</p>
-                    {{/reviews}}
-
-                    <form class="form" action="/player/{{player.id}}/reviews" method="POST">
-                        <h3 class="h5 mb-3">Añadir un comentario</h3>
-                        {{> secondaryFields}}
-                        <button type="submit" class="btn btn-success">
-                            <i class="bi bi-save me-1"></i> Guardar
-                        </button>
-                    </form>
-                </section>
             </div>
-        </section>
 
-        {{> footer}}
+            <section class="mt-5" aria-labelledby="reviews-title">
+                <h2 id="reviews-title" class="h3 mb-4">Reseñas</h2>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
+                {{#reviews}}
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <article>
+                            <header class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                                <div class="d-flex flex-wrap align-items-center gap-2">
+                                    <h3 class="h6 mb-0">{{nickname}}</h3>
+                                    <time class="text-secondary small" datetime="{{review_date}}">{{date_label}}</time>
+                                    <span class="text-secondary small">
+                                        Puntuación: <data value="{{rating}}">{{rating_label}}</data>
+                                    </span>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <a href="/player/{{player.id}}/reviews/{{id}}/edit" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil me-1"></i>Editar
+                                    </a>
+                                    <form action="/player/{{player.id}}/reviews/{{id}}/delete" method="POST">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-trash me-1"></i>Borrar
+                                        </button>
+                                    </form>
+                                </div>
+                            </header>
+                            <p class="mb-0">{{opinion}}</p>
+                        </article>
+                    </div>
+                </div>
+                {{/reviews}}
+                {{^reviews}}
+                <p class="text-secondary">Todavía no hay reseñas para este jugador.</p>
+                {{/reviews}}
+
+                <form class="form" action="/player/{{player.id}}/reviews" method="POST">
+                    <h3 class="h5 mb-3">Añadir una reseña</h3>
+                    {{> reviewFields}}
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-save me-1"></i> Guardar
+                    </button>
+                </form>
+            </section>
+        </div>
+    </main>
+
+    {{> footer}}
+</body>
+
 </html>

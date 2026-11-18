@@ -3,86 +3,75 @@
 /**
  * app.js – Express server entry point for LEAGUES MARKET.
  *
- * Configures:
- *   - Mustache as the view engine (views/ directory, partials/ subdirectory).
- *   - Static files served from the project root (css/, js/, images/, assets/).
- *   - URL-encoded body parsing for form submissions.
- *   - MongoDB connection + seed on first run.
- *   - Main-entity home page router (Person 1).
- *
- * Secondary-entity router (Person 4) is NOT mounted here because it depends
- * on a `store` object whose methods (getPlayer, getReviews, etc.) are not yet
- * implemented.  See INTEGRATION NOTE below.
+ *   - Views are .html files rendered with Mustache; the shared partials
+ *     (head, header, footer...) live in views/partials.
+ *   - Static files (CSS, JS, favicon) are served from public/ and the player
+ *     images from uploads/.
+ *   - On startup the database and the uploads folder are filled with the demo
+ *     data (see seed.js) and the routers are mounted.
  */
 
 const express = require('express');
 const mustacheExpress = require('mustache-express');
-const path = require('path');
+const path = require('node:path');
 
 const { connectDB } = require('./db');
-const { seedIfEmpty } = require('./seed');
-const createMainRouter = require('./routes/mainRouter');
+const { createStore } = require('./store');
+const { loadDemoData } = require('./seed');
+const { UPLOADS_DIR } = require('./utils/images');
+const { categoryLinks, renderError } = require('./utils/viewHelpers');
+const createHomeRouter = require('./routes/homeRouter');
+const createPlayerRouter = require('./routes/playerRouter');
+const createReviewRouter = require('./routes/reviewRouter');
 
 const PORT = process.env.PORT || 3000;
 const app = express();
 
-// --- View engine -----------------------------------------------------------
-app.engine('mustache', mustacheExpress(
-    path.join(__dirname, 'views', 'partials') // partials directory
-));
-app.set('view engine', 'mustache');
+// --- View engine: Mustache templates with the .html extension ---------------
+app.engine('html', mustacheExpress(path.join(__dirname, 'views', 'partials'), '.html'));
+app.set('view engine', 'html');
 app.set('views', path.join(__dirname, 'views'));
 
-// --- Static assets ----------------------------------------------------------
-// Redirect /index.html to / so the dynamic template is always served.
-app.get('/index.html', (req, res) => {
-    const qs = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
-    res.redirect(301, `/${qs}`);
-});
+// Default values for the shared header, so every page shows the same search
+// form and category buttons. The home page overrides them with the active
+// filters.
+app.locals.categories = categoryLinks();
+app.locals.allUrl = '/';
 
-// Serve CSS, JS, images and other static files from the project root so that
-// existing paths like /css/styles.css, /images/..., /assets/favicon.ico work.
-// Disable default 'index.html' serving so that the dynamic GET / route in mainRouter is not shadowed.
-app.use(express.static(path.join(__dirname), { index: false }));
-
-// --- Body parser (form data) ------------------------------------------------
+// --- Static files and form parsing -------------------------------------------
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(UPLOADS_DIR));
 app.use(express.urlencoded({ extended: false }));
 
-// --- Start ------------------------------------------------------------------
+// --- Start ---------------------------------------------------------------------
 (async () => {
     try {
         const db = await connectDB();
-        await seedIfEmpty(db);
+        const store = createStore(db);
+        await loadDemoData(store);
 
-        // Person 1 – home page, search, pagination
-        app.use(createMainRouter(db));
+        app.use(createHomeRouter(store));
+        app.use(createPlayerRouter(store));
+        app.use(createReviewRouter(store));
 
-        /*
-         * INTEGRATION NOTE – Teammates' Store-backed Routers
-         * --------------------------------------------------
-         * Person 2 (playerRouter), Person 3 (playerDetailRouter / mainRouter(store)),
-         * and Person 4 (secondaryRouter) export router factories that require a
-         * `store` data-access adapter implementing:
-         *   - getPlayers()
-         *   - getPlayer(playerId)
-         *   - addPlayer(player)
-         *   - updatePlayer(playerId, player)
-         *   - deletePlayer(playerId)
-         *   - deleteReviewsByPlayer(playerId)
-         *   - getPlayerByImage(imagePath, excludeId)
-         *   - getReviews(playerId)
-         *   - getReview(playerId, reviewId)
-         *   - addReview(playerId, review)
-         *   - updateReview(playerId, reviewId, f)
-         *   - deleteReview(playerId, reviewId)
-         *
-         * Since those store methods are not implemented yet, mounting them with incomplete
-         * dependencies or fake stubs is strictly avoided. Once a store module is created:
-         *
-         *   app.use(require('./routes/playerRouter')(store));
-         *   app.use(require('./routes/playerDetailRouter')(store));
-         *   app.use(require('./routes/secondaryRouter')(store));
-         */
+        // Any other URL: error page with the same look as the rest of the site.
+        app.use((req, res) => renderError(res, {
+            status: 404,
+            title: 'Página no encontrada',
+            message: 'La página que buscas no existe.'
+        }));
+
+        // Unexpected errors (Express 5 also forwards here the errors thrown by
+        // async route handlers).
+        app.use((err, req, res, next) => {
+            console.error(err);
+            if (res.headersSent) return next(err);
+            return renderError(res, {
+                status: 500,
+                title: 'Error del servidor',
+                message: 'Ha ocurrido un error inesperado. Inténtalo de nuevo más tarde.'
+            });
+        });
 
         app.listen(PORT, () => {
             console.log(`LEAGUES MARKET listening on http://localhost:${PORT}`);

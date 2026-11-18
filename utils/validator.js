@@ -1,17 +1,19 @@
 'use strict';
 
 /**
- * Validación de la entidad secundaria (LaLiga Card Review).
+ * utils/validator.js – Server-side validation of the forms.
  *
- * Es una función pura (sin acceso a base de datos ni a Express) para que se
- * pueda reutilizar tanto al crear como al editar una reseña.
- *
- * Atributos de la entidad: nickname, review_date, opinion, rating.
- * El "título" que no puede repetirse es el `nickname`: un mismo usuario no
- * puede publicar dos reseñas sobre el mismo jugador.
+ * Both validators are pure functions (no database and no Express access), so
+ * the same rules are reused when an element is created and when it is edited.
+ * They are built from small field checks shared by both entities. Error
+ * messages are shown to the user, so they are written in Spanish.
  */
 
-const LIMITS = Object.freeze({
+// ---------------------------------------------------------------------------
+// Limits and categories
+// ---------------------------------------------------------------------------
+
+const REVIEW_LIMITS = Object.freeze({
     NICKNAME_MIN: 2,
     NICKNAME_MAX: 30,
     OPINION_MIN: 10,
@@ -19,115 +21,6 @@ const LIMITS = Object.freeze({
     RATING_MIN: 1,
     RATING_MAX: 5
 });
-
-const ISO_DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
-
-function todayISO(now = new Date()) {
-    const y = now.getFullYear();
-    const m = String(now.getMonth() + 1).padStart(2, '0');
-    const d = String(now.getDate()).padStart(2, '0');
-    return `${y}-${m}-${d}`;
-}
-
-/** Devuelve true si `value` es una fecha real en formato YYYY-MM-DD. */
-function isValidISODate(value) {
-    const match = ISO_DATE.exec(value);
-    if (!match) return false;
-    const [, y, m, d] = match.map(Number);
-    const date = new Date(Date.UTC(y, m - 1, d));
-    return date.getUTCFullYear() === y && date.getUTCMonth() === m - 1 && date.getUTCDate() === d;
-}
-
-function asTrimmedString(value) {
-    return typeof value === 'string' ? value.trim() : '';
-}
-
-/**
- * Valida y normaliza los datos de una reseña.
- *
- * @param {object} input  Cuerpo del formulario (req.body).
- * @param {object} [options]
- * @param {Array<{id?: string, _id?: *, nickname: string}>} [options.existingReviews]
- *        Reseñas que ya tiene el jugador (para comprobar el nickname repetido).
- * @param {string} [options.excludeId]  Id de la reseña que se está editando,
- *        para que no choque consigo misma.
- * @param {Date} [options.now]  Fecha actual (inyectable para tests).
- * @returns {{valid: boolean, errors: string[], fieldErrors: object, values: object}}
- *          `values` son los datos ya normalizados, o lo que escribió el usuario
- *          para volver a pintarlo si hay errores.
- */
-function validateReview(input, options = {}) {
-    const { existingReviews = [], excludeId = null, now = new Date() } = options;
-    const body = input || {};
-
-    const values = {
-        nickname: asTrimmedString(body.nickname),
-        review_date: asTrimmedString(body.review_date),
-        opinion: asTrimmedString(body.opinion),
-        rating: asTrimmedString(body.rating)
-    };
-
-    const fieldErrors = {};
-
-    // nickname: obligatorio, longitud acotada y no repetido en el mismo jugador
-    if (!values.nickname) {
-        fieldErrors.nickname = 'El nombre de usuario es obligatorio.';
-    } else if (values.nickname.length < LIMITS.NICKNAME_MIN || values.nickname.length > LIMITS.NICKNAME_MAX) {
-        fieldErrors.nickname =
-            `El nombre de usuario debe tener entre ${LIMITS.NICKNAME_MIN} y ${LIMITS.NICKNAME_MAX} caracteres.`;
-    } else {
-        const wanted = values.nickname.toLowerCase();
-        const repeated = existingReviews.some((review) => {
-            const id = String(review.id ?? review._id ?? '');
-            if (excludeId !== null && id === String(excludeId)) return false;
-            return asTrimmedString(review.nickname).toLowerCase() === wanted;
-        });
-        if (repeated) {
-            fieldErrors.nickname = 'Ya existe una reseña con ese nombre de usuario para este jugador.';
-        }
-    }
-
-    // review_date: obligatoria, fecha real y no futura
-    if (!values.review_date) {
-        fieldErrors.review_date = 'La fecha de la reseña es obligatoria.';
-    } else if (!isValidISODate(values.review_date)) {
-        fieldErrors.review_date = 'La fecha de la reseña no es válida.';
-    } else if (values.review_date > todayISO(now)) {
-        fieldErrors.review_date = 'La fecha de la reseña no puede ser futura.';
-    }
-
-    // opinion: obligatoria y de longitud acotada
-    if (!values.opinion) {
-        fieldErrors.opinion = 'La reseña es obligatoria.';
-    } else if (values.opinion.length < LIMITS.OPINION_MIN || values.opinion.length > LIMITS.OPINION_MAX) {
-        fieldErrors.opinion =
-            `La reseña debe tener entre ${LIMITS.OPINION_MIN} y ${LIMITS.OPINION_MAX} caracteres.`;
-    }
-
-    // rating: obligatorio y entero entre 1 y 5
-    if (!values.rating) {
-        fieldErrors.rating = 'La puntuación es obligatoria.';
-    } else {
-        const rating = Number(values.rating);
-        if (!Number.isInteger(rating) || rating < LIMITS.RATING_MIN || rating > LIMITS.RATING_MAX) {
-            fieldErrors.rating =
-                `La puntuación debe ser un número entero entre ${LIMITS.RATING_MIN} y ${LIMITS.RATING_MAX}.`;
-        }
-    }
-
-    const errors = Object.values(fieldErrors);
-    const valid = errors.length === 0;
-
-    if (valid) {
-        values.rating = Number(values.rating);
-    }
-
-    return { valid, errors, fieldErrors, values };
-}
-
-// ---------------------------------------------------------------------------
-// Validación de la entidad principal (LaLiga Player).
-// ---------------------------------------------------------------------------
 
 const PLAYER_LIMITS = Object.freeze({
     NAME_MIN: 2,
@@ -142,30 +35,64 @@ const PLAYER_LIMITS = Object.freeze({
     DESCRIPTION_MAX: 2000,
     PRICE_MIN: 0,
     PRICE_MAX: 999_999_999,
-    /** Edad mínima razonable (años) */
+    /** Minimum reasonable age (years). */
     AGE_MIN: 15,
-    /** Edad máxima razonable (años) */
+    /** Maximum reasonable age (years). */
     AGE_MAX: 55,
     IMAGE_MAX_BYTES: 5 * 1024 * 1024
 });
 
-/** Posiciones válidas para un jugador. */
-const VALID_POSITIONS = Object.freeze([
-    'portero', 'defensa', 'centrocampista', 'delantero'
+/**
+ * Positions of a player: the categories of the main entity. `value` is what
+ * is stored in the database and `label` the name of the category button.
+ */
+const POSITIONS = Object.freeze([
+    { value: 'Portero', label: 'Porteros' },
+    { value: 'Defensa', label: 'Defensas' },
+    { value: 'Centrocampista', label: 'Centrocampistas' },
+    { value: 'Delantero', label: 'Delanteros' }
 ]);
 
-/** Comprueba que la primera letra es mayúscula (soporta acentos y Unicode). */
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+const ISO_DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
+const INTEGER = /^-?\d+$/;
+
+/** Today's local date as YYYY-MM-DD (the format used by <input type="date">). */
+function todayISO(now = new Date()) {
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+/** Returns true if `value` is a real calendar date written as YYYY-MM-DD. */
+function isValidISODate(value) {
+    const match = ISO_DATE.exec(value);
+    if (!match) return false;
+    const [, year, month, day] = match.map(Number);
+    const date = new Date(Date.UTC(year, month - 1, day));
+    return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
+}
+
+function asTrimmedString(value) {
+    return typeof value === 'string' ? value.trim() : '';
+}
+
+/** Returns true if the first character is an uppercase letter (accents included). */
 function startsWithUppercase(value) {
     return /^\p{Lu}/u.test(value);
 }
 
 /**
- * Edad cumplida en años. Compara día, mes y año en el calendario, que es más
- * exacto que dividir milisegundos entre 365,25 (un jugador que hoy cumple
- * 15 años debe considerarse de 15, no de 14).
+ * Age in completed years. Compares day, month and year in the calendar, which
+ * is more accurate than dividing milliseconds by 365.25 (a player who turns 15
+ * today must be considered 15 years old, not 14).
  *
- * @param {string} isoDate  Fecha "YYYY-MM-DD" ya validada con isValidISODate.
- * @param {Date} now        Fecha actual.
+ * @param {string} isoDate  YYYY-MM-DD date already checked with isValidISODate.
+ * @param {Date} now        Current date.
  * @returns {number}
  */
 function ageInYears(isoDate, now) {
@@ -179,44 +106,165 @@ function ageInYears(isoDate, now) {
 }
 
 /**
- * Valida la longitud y primera mayúscula de un campo de texto genérico.
- *
- * @param {string} value  Valor ya recortado con trim().
- * @param {string} label  Nombre legible del campo (para mensajes).
- * @param {number} min    Longitud mínima.
- * @param {number} max    Longitud máxima.
- * @returns {string|null} Mensaje de error o null si es válido.
+ * Returns true if another element of `elements` (ignoring the one whose id is
+ * `excludeId`) already has `value` in `field`, ignoring case.
  */
-function validateTextField(value, label, min, max) {
-    if (!value) {
-        return `${label} es obligatorio.`;
-    }
+function isRepeated(elements, field, value, excludeId) {
+    const wanted = value.toLowerCase();
+    return elements.some((element) => {
+        const id = String(element.id ?? element._id ?? '');
+        if (excludeId != null && id === String(excludeId)) return false;
+        return asTrimmedString(element[field]).toLowerCase() === wanted;
+    });
+}
+
+/** Position whose value matches `value` ignoring case, or undefined. */
+function findPosition(value) {
+    return POSITIONS.find((position) => position.value.toLowerCase() === value.toLowerCase());
+}
+
+// ---------------------------------------------------------------------------
+// Field checks. Each one returns an error message, or null if the value is
+// valid. Labels include their article ("La reseña", "El equipo"), which also
+// tells the gender of "obligatorio/obligatoria".
+// ---------------------------------------------------------------------------
+
+function requiredMessage(label) {
+    return `${label} es ${label.startsWith('La ') ? 'obligatoria' : 'obligatorio'}.`;
+}
+
+/** Required text whose length is between `min` and `max`. */
+function checkText(value, label, min, max) {
+    if (!value) return requiredMessage(label);
     if (value.length < min || value.length > max) {
         return `${label} debe tener entre ${min} y ${max} caracteres.`;
-    }
-    if (!startsWithUppercase(value)) {
-        return `${label} debe empezar por mayúscula.`;
     }
     return null;
 }
 
+/** Like checkText, and the text must also start with an uppercase letter. */
+function checkCapitalizedText(value, label, min, max) {
+    return checkText(value, label, min, max)
+        ?? (startsWithUppercase(value) ? null : `${label} debe empezar por mayúscula.`);
+}
+
+/** Required integer (digits only) between `min` and `max`. */
+function checkInteger(value, label, min, max) {
+    if (!value) return requiredMessage(label);
+    const number = Number(value);
+    if (!INTEGER.test(value) || number < min || number > max) {
+        return `${label} debe ser un número entero entre ${min} y ${max}.`;
+    }
+    return null;
+}
+
+/** Required YYYY-MM-DD date that is not in the future (labels are "La fecha..."). */
+function checkPastDate(value, label, now) {
+    if (!value) return requiredMessage(label);
+    if (!isValidISODate(value)) return `${label} no es válida.`;
+    if (value > todayISO(now)) return `${label} no puede ser futura.`;
+    return null;
+}
+
+/** The player must be between AGE_MIN and AGE_MAX years old. */
+function checkAge(isoDate, now) {
+    const age = ageInYears(isoDate, now);
+    if (age < PLAYER_LIMITS.AGE_MIN) return `El jugador debe tener al menos ${PLAYER_LIMITS.AGE_MIN} años.`;
+    if (age > PLAYER_LIMITS.AGE_MAX) return `El jugador no puede tener más de ${PLAYER_LIMITS.AGE_MAX} años.`;
+    return null;
+}
+
+/** Required position, one of POSITIONS. */
+function checkPosition(value) {
+    if (!value) return requiredMessage('La posición');
+    return findPosition(value)
+        ? null
+        : `La posición debe ser una de: ${POSITIONS.map((position) => position.value).join(', ')}.`;
+}
+
 /**
- * Valida y normaliza los datos de un jugador.
+ * Common result of both validators.
  *
- * Es una función pura (sin acceso a base de datos ni a Express) para que se
- * pueda reutilizar tanto al crear como al editar un jugador.
- *
- * @param {object} input  Cuerpo del formulario (req.body).
- * @param {object} [options]
- * @param {Array<{id?: string, _id?: *, player_name: string}>} [options.existingPlayers]
- *        Jugadores existentes (para comprobar el nombre repetido).
- * @param {string} [options.excludeId]  Id del jugador que se está editando,
- *        para que no choque consigo mismo.
- * @param {Date} [options.now]  Fecha actual (inyectable para tests).
+ * @param {object} checks  Error message (or null) of every field.
+ * @param {object} values  Values read from the form.
  * @returns {{valid: boolean, errors: string[], fieldErrors: object, values: object}}
+ *          `fieldErrors` only keeps the fields that failed.
+ */
+function buildResult(checks, values) {
+    const fieldErrors = Object.fromEntries(Object.entries(checks).filter(([, message]) => message));
+    const errors = Object.values(fieldErrors);
+    return { valid: errors.length === 0, errors, fieldErrors, values };
+}
+
+// ---------------------------------------------------------------------------
+// Secondary entity: LaLiga Card Review
+// ---------------------------------------------------------------------------
+
+/**
+ * Validates and normalises the data of a review.
+ *
+ * The nickname works as the review "title": the same user cannot publish two
+ * reviews about the same player.
+ *
+ * @param {object} input  Form body (req.body).
+ * @param {object} [options]
+ * @param {Array<{_id?: *, nickname: string}>} [options.existingReviews]
+ *        Reviews the player already has (to detect a repeated nickname).
+ * @param {string} [options.excludeId]  Id of the review being edited, so it
+ *        does not clash with itself.
+ * @param {Date} [options.now]  Current date (injectable for tests).
+ * @returns {{valid: boolean, errors: string[], fieldErrors: object, values: object}}
+ *          When valid, `values` holds the normalised data (rating as a number).
+ */
+function validateReview(input, options = {}) {
+    const { existingReviews = [], excludeId = null, now = new Date() } = options;
+    const body = input || {};
+
+    const values = {
+        nickname: asTrimmedString(body.nickname),
+        review_date: asTrimmedString(body.review_date),
+        opinion: asTrimmedString(body.opinion),
+        rating: asTrimmedString(body.rating)
+    };
+
+    const result = buildResult({
+        nickname: checkText(values.nickname, 'El nombre de usuario', REVIEW_LIMITS.NICKNAME_MIN, REVIEW_LIMITS.NICKNAME_MAX)
+            ?? (isRepeated(existingReviews, 'nickname', values.nickname, excludeId)
+                ? 'Ya existe una reseña con ese nombre de usuario para este jugador.'
+                : null),
+        review_date: checkPastDate(values.review_date, 'La fecha de la reseña', now),
+        opinion: checkText(values.opinion, 'La opinión', REVIEW_LIMITS.OPINION_MIN, REVIEW_LIMITS.OPINION_MAX),
+        rating: checkInteger(values.rating, 'La puntuación', REVIEW_LIMITS.RATING_MIN, REVIEW_LIMITS.RATING_MAX)
+    }, values);
+
+    if (result.valid) {
+        values.rating = Number(values.rating);
+    }
+    return result;
+}
+
+// ---------------------------------------------------------------------------
+// Main entity: LaLiga Player
+// ---------------------------------------------------------------------------
+
+/**
+ * Validates and normalises the data of a player.
+ *
+ * @param {object} input  Form body (req.body).
+ * @param {object} [options]
+ * @param {Array<{_id?: *, player_name: string}>} [options.existingPlayers]
+ *        Existing players (to detect a repeated name).
+ * @param {string} [options.excludeId]  Id of the player being edited, so it
+ *        does not clash with itself.
+ * @param {boolean} [options.hasImage=true]  Whether the player has an image
+ *        (a new upload or the one it already had). The image is mandatory.
+ * @param {Date} [options.now]  Current date (injectable for tests).
+ * @returns {{valid: boolean, errors: string[], fieldErrors: object, values: object}}
+ *          When valid, `values` holds the normalised data (price as a number
+ *          and position with its canonical spelling).
  */
 function validatePlayer(input, options = {}) {
-    const { existingPlayers = [], excludeId = null, now = new Date() } = options;
+    const { existingPlayers = [], excludeId = null, hasImage = true, now = new Date() } = options;
     const body = input || {};
 
     const values = {
@@ -224,144 +272,40 @@ function validatePlayer(input, options = {}) {
         team: asTrimmedString(body.team),
         league: asTrimmedString(body.league),
         photographer: asTrimmedString(body.photographer),
-        position: asTrimmedString(body.position).toLowerCase(),
+        position: asTrimmedString(body.position),
         date_of_birth: asTrimmedString(body.date_of_birth),
         price: asTrimmedString(body.price),
         description: asTrimmedString(body.description)
     };
 
-    const fieldErrors = {};
+    const result = buildResult({
+        player_name: checkCapitalizedText(values.player_name, 'El nombre del jugador', PLAYER_LIMITS.NAME_MIN, PLAYER_LIMITS.NAME_MAX)
+            ?? (isRepeated(existingPlayers, 'player_name', values.player_name, excludeId)
+                ? 'Ya existe un jugador con ese nombre.'
+                : null),
+        team: checkCapitalizedText(values.team, 'El equipo', PLAYER_LIMITS.TEAM_MIN, PLAYER_LIMITS.TEAM_MAX),
+        league: checkCapitalizedText(values.league, 'El nombre de la liga', PLAYER_LIMITS.LEAGUE_MIN, PLAYER_LIMITS.LEAGUE_MAX),
+        photographer: checkCapitalizedText(values.photographer, 'El fotógrafo', PLAYER_LIMITS.PHOTOGRAPHER_MIN, PLAYER_LIMITS.PHOTOGRAPHER_MAX),
+        position: checkPosition(values.position),
+        date_of_birth: checkPastDate(values.date_of_birth, 'La fecha de nacimiento', now)
+            ?? checkAge(values.date_of_birth, now),
+        price: checkInteger(values.price, 'El precio', PLAYER_LIMITS.PRICE_MIN, PLAYER_LIMITS.PRICE_MAX),
+        description: checkText(values.description, 'La descripción', PLAYER_LIMITS.DESCRIPTION_MIN, PLAYER_LIMITS.DESCRIPTION_MAX),
+        image: hasImage ? null : 'La imagen es obligatoria.'
+    }, values);
 
-    // player_name: obligatorio, longitud acotada, primera mayúscula y único
-    const nameErr = validateTextField(
-        values.player_name, 'El nombre del jugador',
-        PLAYER_LIMITS.NAME_MIN, PLAYER_LIMITS.NAME_MAX
-    );
-    if (nameErr) {
-        fieldErrors.player_name = nameErr;
-    } else {
-        const wanted = values.player_name.toLowerCase();
-        const repeated = existingPlayers.some((p) => {
-            const id = String(p.id ?? p._id ?? '');
-            if (excludeId !== null && id === String(excludeId)) return false;
-            return asTrimmedString(p.player_name).toLowerCase() === wanted;
-        });
-        if (repeated) {
-            fieldErrors.player_name = 'Ya existe un jugador con ese nombre.';
-        }
-    }
-
-    // team
-    const teamErr = validateTextField(
-        values.team, 'El equipo',
-        PLAYER_LIMITS.TEAM_MIN, PLAYER_LIMITS.TEAM_MAX
-    );
-    if (teamErr) fieldErrors.team = teamErr;
-
-    // league
-    const leagueErr = validateTextField(
-        values.league, 'El nombre de la liga',
-        PLAYER_LIMITS.LEAGUE_MIN, PLAYER_LIMITS.LEAGUE_MAX
-    );
-    if (leagueErr) fieldErrors.league = leagueErr;
-
-    // photographer
-    const photoErr = validateTextField(
-        values.photographer, 'El fotógrafo',
-        PLAYER_LIMITS.PHOTOGRAPHER_MIN, PLAYER_LIMITS.PHOTOGRAPHER_MAX
-    );
-    if (photoErr) fieldErrors.photographer = photoErr;
-
-    // position
-    if (!values.position) {
-        fieldErrors.position = 'La posición es obligatoria.';
-    } else if (!VALID_POSITIONS.includes(values.position)) {
-        fieldErrors.position =
-            `La posición debe ser una de: ${VALID_POSITIONS.join(', ')}.`;
-    }
-
-    // date_of_birth: fecha real, no futura y rango de edad razonable
-    if (!values.date_of_birth) {
-        fieldErrors.date_of_birth = 'La fecha de nacimiento es obligatoria.';
-    } else if (!isValidISODate(values.date_of_birth)) {
-        fieldErrors.date_of_birth = 'La fecha de nacimiento no es válida.';
-    } else {
-        const today = todayISO(now);
-        if (values.date_of_birth > today) {
-            fieldErrors.date_of_birth = 'La fecha de nacimiento no puede ser futura.';
-        } else {
-            // Comprobar rango de edad razonable
-            const age = ageInYears(values.date_of_birth, now);
-            if (age < PLAYER_LIMITS.AGE_MIN) {
-                fieldErrors.date_of_birth =
-                    `El jugador debe tener al menos ${PLAYER_LIMITS.AGE_MIN} años.`;
-            } else if (age > PLAYER_LIMITS.AGE_MAX) {
-                fieldErrors.date_of_birth =
-                    `El jugador no puede tener más de ${PLAYER_LIMITS.AGE_MAX} años.`;
-            }
-        }
-    }
-
-    // price: entero entre 0 y máximo
-    if (values.price === '') {
-        fieldErrors.price = 'El precio es obligatorio.';
-    } else {
-        const price = Number(values.price);
-        if (!Number.isFinite(price) || !Number.isInteger(price)) {
-            fieldErrors.price = 'El precio debe ser un número entero.';
-        } else if (price < PLAYER_LIMITS.PRICE_MIN || price > PLAYER_LIMITS.PRICE_MAX) {
-            fieldErrors.price =
-                `El precio debe estar entre ${PLAYER_LIMITS.PRICE_MIN} y ${PLAYER_LIMITS.PRICE_MAX}.`;
-        }
-    }
-
-    // description: obligatoria y de longitud acotada
-    if (!values.description) {
-        fieldErrors.description = 'La descripción es obligatoria.';
-    } else if (
-        values.description.length < PLAYER_LIMITS.DESCRIPTION_MIN ||
-        values.description.length > PLAYER_LIMITS.DESCRIPTION_MAX
-    ) {
-        fieldErrors.description =
-            `La descripción debe tener entre ${PLAYER_LIMITS.DESCRIPTION_MIN} y ${PLAYER_LIMITS.DESCRIPTION_MAX} caracteres.`;
-    }
-
-    const errors = Object.values(fieldErrors);
-    const valid = errors.length === 0;
-
-    if (valid) {
+    if (result.valid) {
+        values.position = findPosition(values.position).value;
         values.price = Number(values.price);
     }
-
-    return { valid, errors, fieldErrors, values };
-}
-
-/**
- * Valida el fichero de imagen subido por Multer.
- *
- * @param {object} file  Objeto de Multer (req.file).
- * @returns {{valid: boolean, error: string|null}}
- */
-function validateImageFile(file) {
-    if (!file) {
-        return { valid: false, error: 'La imagen es obligatoria.' };
-    }
-    if (!file.mimetype || !file.mimetype.startsWith('image/')) {
-        return { valid: false, error: 'El archivo debe ser una imagen.' };
-    }
-    if (file.size > PLAYER_LIMITS.IMAGE_MAX_BYTES) {
-        const mb = (PLAYER_LIMITS.IMAGE_MAX_BYTES / (1024 * 1024)).toFixed(0);
-        return { valid: false, error: `La imagen no puede superar los ${mb} MB.` };
-    }
-    return { valid: true, error: null };
+    return result;
 }
 
 module.exports = {
-    validateReview,
-    isValidISODate,
-    LIMITS,
-    validatePlayer,
     PLAYER_LIMITS,
-    VALID_POSITIONS,
-    validateImageFile
+    POSITIONS,
+    REVIEW_LIMITS,
+    todayISO,
+    validatePlayer,
+    validateReview
 };

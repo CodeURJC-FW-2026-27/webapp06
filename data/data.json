@@ -1,0 +1,145 @@
+[
+    {
+        "player_name": "Joan García",
+        "team": "FC Barcelona",
+        "image": "01-Joan_Garcia.webp",
+        "description": "Jugador con gran proyección internacional, excelente reflejo en el área y capacidad para salir con seguridad desde el fondo. Perfil completo para una plantilla competitiva con gran control bajo presión.",
+        "photographer": "Enrique Rodriguez",
+        "price": 79000000,
+        "date_of_birth": "2001-05-04",
+        "league": "LaLiga",
+        "position": "Portero",
+        "reviews": [
+            {
+                "nickname": "Anónimo",
+                "review_date": "2026-10-08",
+                "opinion": "Como experto en futbol es mejor jugador Zak. Nadie mas arrasaria como el en Masara",
+                "rating": 4
+            },
+            {
+                "nickname": "Tú",
+                "review_date": "2026-10-13",
+                "opinion": "not bad, buen portero con proyección internacional",
+                "rating": 5
+            }
+        ]
+    },
+    {
+        "player_name": "Lamine Yamal",
+        "team": "FC Barcelona",
+        "image": "10-Lamine.webp",
+        "description": "Joven extremo con un talento generacional. Regate eléctrico, visión de juego y capacidad goleadora desde la banda derecha. Una de las mayores promesas del fútbol mundial.",
+        "photographer": "Getty Images",
+        "price": 180000000,
+        "date_of_birth": "2007-07-13",
+        "league": "LaLiga",
+        "position": "Delantero",
+        "reviews": [
+            {
+                "nickname": "CuleDeCorazon",
+                "review_date": "2026-10-20",
+                "opinion": "La carta más valiosa del mercado. Su regate y su visión de juego son de otro planeta.",
+                "rating": 5
+            },
+            {
+                "nickname": "Coleccionista10",
+                "review_date": "2026-11-02",
+                "opinion": "Precio muy alto, pero con su proyección seguro que se revaloriza.",
+                "rating": 4
+            }
+        ]
+    },
+    {
+        "player_name": "Marc Cucurella",
+        "team": "Chelsea FC",
+        "image": "CUCURELLA_POSE_1500X2000.webp",
+        "description": "Lateral izquierdo muy ofensivo con gran capacidad de despliegue físico. Destaca por su intensidad defensiva y su aporte en ataque por la banda.",
+        "photographer": "Chelsea FC Media",
+        "price": 35000000,
+        "date_of_birth": "1998-07-22",
+        "league": "Premier League",
+        "position": "Defensa"
+    },
+    {
+        "player_name": "Kylian Mbappé",
+        "team": "Real Madrid",
+        "image": "MBAPPE_POSE_1500X2000.webp",
+        "description": "Delantero explosivo con una velocidad demoledora y gran capacidad goleadora. Referencia del fútbol francés y una de las estrellas del Real Madrid.",
+        "photographer": "Real Madrid CF",
+        "price": 200000000,
+        "date_of_birth": "1998-12-20",
+        "league": "LaLiga",
+        "position": "Delantero",
+        "reviews": [
+            {
+                "nickname": "MadridistaFan",
+                "review_date": "2026-10-15",
+                "opinion": "Velocidad y gol garantizados. Imprescindible en cualquier colección.",
+                "rating": 5
+            }
+        ]
+    },
+    {
+        "player_name": "Aubameyang",
+        "team": "Al-Qadsiah FC",
+        "image": "aubameyang-deportivo-fantasy.webp",
+        "description": "Delantero rápido y letal dentro del área. Con experiencia en las principales ligas europeas, aporta olfato goleador y veteranía al equipo.",
+        "photographer": "AFP",
+        "price": 15000000,
+        "date_of_birth": "1989-06-18",
+        "league": "Saudi Pro League",
+        "position": "Delantero"
+    },
+    {
+        "player_name": "Héctor Bellerín",
+        "team": "FC Barcelona",
+        "image": "foto-curriculum-hector-bellerin.webp",
+        "description": "Lateral derecho con gran velocidad y compromiso social. Tras años en el Arsenal, regresó al fútbol español aportando experiencia y liderazgo.",
+        "photographer": "FC Barcelona",
+        "price": 5000000,
+        "date_of_birth": "1995-03-19",
+        "league": "LaLiga",
+        "position": "Defensa"
+    },
+    {
+        "player_name": "Antoine Griezmann",
+        "team": "Atlético de Madrid",
+        "image": "griezmann.jpg",
+        "description": "Delantero versátil con gran inteligencia táctica. Capaz de jugar como mediapunta, extremo o segundo delantero, aportando goles y asistencias con regularidad.",
+        "photographer": "Atlético de Madrid",
+        "price": 25000000,
+        "date_of_birth": "1991-03-21",
+        "league": "LaLiga",
+        "position": "Delantero",
+        "reviews": [
+            {
+                "nickname": "Rojiblanco",
+                "review_date": "2026-09-28",
+                "opinion": "Un jugador muy completo, aunque ya no es tan decisivo como antes.",
+                "rating": 3
+            }
+        ]
+    },
+    {
+        "player_name": "Unai Simón",
+        "team": "Athletic Club",
+        "image": "imageskjnj.jpeg",
+        "description": "Portero titular de la selección española. Destaca por su juego con los pies y su capacidad para realizar paradas decisivas en los grandes partidos.",
+        "photographer": "Athletic Club",
+        "price": 40000000,
+        "date_of_birth": "1997-06-11",
+        "league": "LaLiga",
+        "position": "Portero"
+    },
+    {
+        "player_name": "Iñigo Vicente",
+        "team": "Athletic Club",
+        "image": "p242833_t189_2026_1_002_000.jpg",
+        "description": "Centrocampista técnico con gran capacidad para organizar el juego. Hábil con ambas piernas, destaca por su visión de pase y su disparo desde fuera del área.",
+        "photographer": "LaLiga",
+        "price": 20000000,
+        "date_of_birth": "1997-01-23",
+        "league": "LaLiga",
+        "position": "Centrocampista"
+    }
+]

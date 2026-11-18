@@ -54,7 +54,7 @@ You can filter each card by `player_name`.
 
 ### Prerequisites
 - **Node.js** (v18 or later, tested on Node v26)
-- **MongoDB Community Server** (v9.0+, listening on `127.0.0.1:27017`)
+- **MongoDB Community Server** (v8.0 or later, listening on `127.0.0.1:27017`)
 
 ### MongoDB Service Management (Windows)
 MongoDB runs as a standard Windows service (`MongoDB`):
@@ -83,8 +83,15 @@ npm start
 ```
 The application will be available at **http://localhost:3000**.
 
-On first run the database is seeded automatically with the 9 example players
-and 2 sample reviews.  Subsequent restarts do not duplicate data.
+Every time the server starts, the demo data is loaded again:
+- the database is emptied and filled with the 9 example players and their
+  6 reviews from `data/data.json`;
+- the `uploads/` folder is emptied and the example images are copied into it
+  from `data/images/`. Images uploaded through the forms are also stored in
+  `uploads/`, which is not tracked by Git.
+
+So the demo always starts from the same state, and restarting the server
+undoes any change made while testing.
 
 ### Environment variables (optional)
 | Variable   | Default                      | Description            |
@@ -99,21 +106,106 @@ and 2 sample reviews.  Subsequent restarts do not duplicate data.
 
 | File | Responsibility |
 |------|----------------|
-| `package.json` | npm dependencies (Express, Mustache, MongoDB) and `npm start` script. |
-| `app.js` | Express server entry point: view engine, static assets, body parser, MongoDB init, route mounting. |
+| `package.json` | npm dependencies (Express, Mustache, MongoDB, Multer) and `npm start` script. |
+| `app.js` | Express server entry point: Mustache view engine (`.html` templates), static files, form parsing, demo data, routers and the 404/500 error pages. |
 | `db.js` | MongoDB connection helper (`connectDB`). |
-| `seed.js` | Inserts the 9 example players and 2 reviews when the database is empty. |
-| `routes/mainRouter.js` | `GET /` – home page with pagination (6/page), name search, and position category filter. |
-| `routes/secondaryRouter.js` | *(Person 4 – unchanged)* Secondary-entity CRUD routes. |
-| `utils/validator.js` | *(Person 4 – unchanged)* Review validation logic. |
-| `views/index.mustache` | Home page template: player cards grid, pagination, search/category state. |
-| `views/partials/header.mustache` | Shared header partial: search form + category buttons with active state. |
-| `views/partials/footer.mustache` | Shared footer partial. |
-| `views/detail.mustache` | *(Person 4 – unchanged)* Player detail page template. |
-| `views/secondaryForm.mustache` | *(Person 4 – unchanged)* Review edit form template. |
-| `views/secondaryResult.mustache` | *(Person 4 – unchanged)* Review operation result template. |
-| `views/partials/secondaryFields.mustache` | *(Person 4 – unchanged)* Reusable review form fields partial. |
+| `store.js` | Data access layer: every MongoDB query for players and reviews. |
+| `seed.js` | Loads the demo data on every start (database + images copied from `data/images` to `uploads/`). |
+| `data/data.json` | Example players, each one with its example reviews. |
+| `data/images/` | Example player images. |
+| `routes/homeRouter.js` | `GET /`: home page with pagination (6 per page), search by name and filter by position (category). |
+| `routes/playerRouter.js` | Player pages: create, detail, edit and delete. Create and edit share the form and the handler (`savePlayer`). |
+| `routes/reviewRouter.js` | Review routes: create, edit and delete. Create and edit share the handler (`saveReview`). |
+| `utils/validator.js` | Server-side validation of players and reviews. |
+| `utils/images.js` | Image upload (Multer), deletion and the `uploads/` folder. |
+| `utils/viewHelpers.js` | Data formatting for the views and rendering of the confirmation and error pages. |
+| `views/index.html` | Home page: player cards, pagination. |
+| `views/playerDetail.html` | Player detail page with its reviews and the form to add a review. |
+| `views/playerForm.html` | Player form, used to create and to edit. |
+| `views/reviewForm.html` | Review edit form. |
+| `views/confirmation.html` | Confirmation page shown after adding, editing or deleting a player or a review. |
+| `views/error.html` | Error page (invalid form data, missing elements, failed uploads, unexpected errors). |
+| `views/partials/head.html` | Shared `<head>` content (metadata, fonts, styles). |
+| `views/partials/header.html` | Shared header: search form and category buttons. |
+| `views/partials/footer.html` | Shared footer and scripts. |
+| `views/partials/reviewFields.html` | Review form fields, used to create and to edit. |
+| `public/` | Static files: CSS, JS and favicon. |
 | `.gitignore` | Ignores `node_modules/` and `uploads/`. |
+
+---
+
+## **Demo (Práctica 2)**
+
+### Before the defense
+1. Start MongoDB (on Windows: `Start-Service -Name MongoDB`).
+2. Run `npm install` (first time only) and `npm start`, then open **http://localhost:3000**.
+   Every start reloads the demo data: 9 players and 6 reviews.
+3. Have two images ready (JPG, PNG, WEBP, GIF or AVIF, up to 5 MB): one to create a
+   player and another one to change it when editing.
+
+### Steps
+1. **Demo data and pagination**: the home page shows 6 of the 9 players; the
+   pagination (numbers, « and ») shows the other 3 on page 2.
+2. **Search by name**: type `garcia` in the search box of the header to find
+   *Joan García* (case and accents are ignored).
+3. **Categories**: click *Porteros* to see only Joan García and Unai Simón. The
+   category and the search can be combined (*Porteros* + `unai`).
+4. **Detail page**: click a card; the URL contains the player's id
+   (`/player/<id>`). It shows every attribute (image, photographer, price, team,
+   position, league, date of birth and description) and the player's reviews
+   (e.g. *Lamine Yamal* has two).
+5. **Create a player**: *Crear nuevo elemento*, fill in the form (example data
+   below) and press *Guardar*. A confirmation page is shown; *Ver jugador* opens
+   the new player, which also appears on page 2 and in its category.
+6. **Validation in the browser**: a name starting with a lowercase letter or a
+   description shorter than 20 characters is not accepted by the form. A name
+   that already exists (e.g. `Lamine Yamal`) is rejected by the server.
+7. **Validation in the server**: with the browser's developer tools, add the
+   attribute `novalidate` to the `<form>` element (or remove `required`,
+   `pattern`, `minlength`...) and submit the form empty. The error page lists one
+   problem per field, the image included; *Volver a intentarlo* goes back to the form.
+8. **Edit a player**: *Editar* on the detail page opens the same form filled in
+   with its data and its current image. Change, for instance, the price and the
+   image and press *Guardar cambios*.
+9. **Reviews**: at the bottom of a detail page, add a review (confirmation page).
+   *Editar* on a review opens its form with its data; *Borrar* deletes it. A
+   nickname already used for that player, a future date or a rating outside 1–5
+   lead to the error page.
+10. **Delete a player**: *Borrar* on its detail page deletes the player, its
+    reviews and its image, and shows a confirmation page.
+11. **Same look everywhere**: every page, the confirmation and error pages
+    included (e.g. `/player/abc`), shares the header and the footer.
+12. Restarting the server (`Ctrl+C` and `npm start`) restores the demo data.
+
+### Example data
+| Field | Player to create |
+|-------|------------------|
+| Nombre del jugador | `Pedri González` |
+| Fecha de nacimiento | `25/11/2002` |
+| Equipo del jugador | `FC Barcelona` |
+| Categoría | `Centrocampista` |
+| Liga | `LaLiga` |
+| Descripción | `Centrocampista creativo con una visión de juego excepcional y gran control del balón.` |
+| Imagen | any JPG, PNG, WEBP, GIF or AVIF image up to 5 MB |
+| Fotógrafo | `Getty Images` |
+| Precio | `100000000` |
+
+Review: nickname `Tester`, today's date, rating `4 - Muy buena`, opinion
+`Muy buena carta para la colección.`
+
+### Where each requirement is implemented
+- **Shared header and footer**: Mustache partials in `views/partials/`
+  (`header.html`, `footer.html` and `head.html`), included by every view.
+- **One confirmation page and one error page** for every operation:
+  `views/confirmation.html` and `views/error.html`, rendered through
+  `renderConfirmation` and `renderError` (`utils/viewHelpers.js`).
+- **Same form and handler to create and edit**: `views/playerForm.html` and
+  `savePlayer` (`routes/playerRouter.js`); reviews share
+  `views/partials/reviewFields.html` and `saveReview` (`routes/reviewRouter.js`).
+- **Server-side validation**: `utils/validator.js`. The forms use HTML5
+  attributes with the same limits.
+- **Sample images**: `data/images/`, copied into `uploads/` on every start by
+  `seed.js`. `uploads/` and `node_modules/` are listed in `.gitignore`.
 
 ---
 
@@ -149,12 +241,24 @@ Diego :
   
   Relevant Files : newelem.html, newcomen.html
 
-  PRÁCTICA 2.
+## PRÁCTICA 2.
 
+Javier :
+  Description  : I implemented the secondary entity (LaLiga Card Review): its server-side validation, the routes to create, edit and delete reviews, the review edit form, the form fields shared by creating and editing, and the list of reviews on the player detail page.
+
+  Significant commits :
+  [c7460180ce14c297f43d9030d451bf7c04829816](https://github.com/CodeURJC-FW-2026-27/webapp06/commit/c7460180ce14c297f43d9030d451bf7c04829816),
+  [8a2cfa996435bf788589e4e46653e2a4b6b6aace](https://github.com/CodeURJC-FW-2026-27/webapp06/commit/8a2cfa996435bf788589e4e46653e2a4b6b6aace),
+  [f33a09709f10a849ee341098974ca6260cce80bf](https://github.com/CodeURJC-FW-2026-27/webapp06/commit/f33a09709f10a849ee341098974ca6260cce80bf),
+  [21297fe182adf642775dbb221bafa6be55e13a7b](https://github.com/CodeURJC-FW-2026-27/webapp06/commit/21297fe182adf642775dbb221bafa6be55e13a7b),
+  [97e1cf80869b0991ed6a46a287bb6a95fa59b53b](https://github.com/CodeURJC-FW-2026-27/webapp06/commit/97e1cf80869b0991ed6a46a287bb6a95fa59b53b)
+
+  Relevant Files : routes/reviewRouter.js, utils/validator.js, store.js, views/playerDetail.html, views/partials/reviewFields.html
+  
 Sara :
 
   Description : I implemented the player creation and editing routes (GET/POST), the reusable Mustache form view, image upload and cleanup using Multer, and client/server-side data validation.
   
   Significant commits : a96b0da, fbde250, 93382fc, 946a89a, 9630901, e5bdec7
   
-  Relevant Files : routes/playerRouter.js, views/playerForm.mustache
+  Relevant Files : routes/playerRouter.js, views/playerForm.html

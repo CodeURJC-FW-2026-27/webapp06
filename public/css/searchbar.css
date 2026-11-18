@@ -5,7 +5,7 @@
     overflow: hidden;
 }
 
-/* 2. Campo de texto */
+/* Search text field */
 .search-input {
     border: 2px solid transparent;
     padding-left: 25px;
@@ -18,7 +18,7 @@
     border-color: #0d6efd;
 }
 
-/* 3. Botón de Buscar */
+/* Search button */
 .search-btn {
     font-weight: 600;
     letter-spacing: 0.5px;
