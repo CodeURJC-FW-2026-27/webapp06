@@ -1,6 +1,24 @@
 'use strict';
 
+const crypto = require('node:crypto');
 const express = require('express');
+const fs = require('node:fs');
+const multer = require('multer');
+const path = require('node:path');
+
+const uploadsDirectory = path.resolve(__dirname, '..', 'uploads');
+
+fs.mkdirSync(uploadsDirectory, { recursive: true });
+
+const upload = multer({
+    storage: multer.diskStorage({
+        destination: uploadsDirectory,
+        filename: (req, file, callback) => {
+            const extension = path.extname(file.originalname);
+            callback(null, `${crypto.randomBytes(16).toString('hex')}${extension}`);
+        }
+    })
+});
 
 /**
  * Player creation routes.
@@ -45,7 +63,7 @@ module.exports = function createPlayerRouter(store) {
         });
     });
 
-    router.post('/player', handle(async (req, res) => {
+    router.post('/player', upload.single('image'), handle(async (req, res) => {
         const player = {
             player_name: req.body.player_name,
             team: req.body.team,
@@ -54,7 +72,8 @@ module.exports = function createPlayerRouter(store) {
             description: req.body.description,
             photographer: req.body.photographer,
             price: req.body.price,
-            date_of_birth: req.body.date_of_birth
+            date_of_birth: req.body.date_of_birth,
+            image: req.file ? `/uploads/${req.file.filename}` : ''
         };
 
         await store.addPlayer(player);
