@@ -256,9 +256,14 @@ Javier :
   Relevant Files : routes/reviewRouter.js, utils/validator.js, store.js, views/playerDetail.html, views/partials/reviewFields.html
   
 Sara :
-
   Description : I implemented the player creation and editing routes (GET/POST), the reusable Mustache form view, image upload and cleanup using Multer, and client/server-side data validation.
   
   Significant commits : a96b0da, fbde250, 93382fc, 946a89a, 9630901, e5bdec7
   
   Relevant Files : routes/playerRouter.js, views/playerForm.html
+
+Diego : I implement the Detail Page by loading the main entity and its list of secondary entities from MongoDB.   Implement the Deletion of the main entity also removing its secondary entities and image.   Create the generic Confirmation and Error views and the centralized server-side validation module.
+
+Significant commits : 6afee0bf7d4efa00af81927329e3fd925c122292
+
+Relevant Files : confirmation.html error.html
