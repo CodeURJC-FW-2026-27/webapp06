@@ -2,8 +2,9 @@
 
 const crypto = require('node:crypto');
 const express = require('express');
-const fs = require('node:fs');
+const fs = require('node:fs/promises');
 const multer = require('multer');
+const { ObjectId } = require('mongodb');
 const path = require('node:path');
 const {
     PLAYER_LIMITS,
@@ -12,16 +13,21 @@ const {
     validatePlayer
 } = require('../utils/validator');
 
-const uploadsDirectory = path.resolve(__dirname, '..', 'uploads');
-
-fs.mkdirSync(uploadsDirectory, { recursive: true });
+const imagesDirectory = path.resolve(__dirname, '..', 'images');
 
 const upload = multer({
     storage: multer.diskStorage({
-        destination: uploadsDirectory,
+        destination: async (req, file, callback) => {
+            try {
+                await fs.mkdir(imagesDirectory, { recursive: true });
+                callback(null, imagesDirectory);
+            } catch (error) {
+                callback(error);
+            }
+        },
         filename: (req, file, callback) => {
             const extension = path.extname(file.originalname);
-            callback(null, `${crypto.randomBytes(16).toString('hex')}${extension}`);
+            callback(null, `player-upload-${crypto.randomBytes(16).toString('hex')}${extension}`);
         }
     }),
     limits: {
@@ -39,23 +45,23 @@ const upload = multer({
 });
 
 const PLAYER_FIELD_ERRORS = Object.freeze({
-    player_name: `Player name is required, must start with an uppercase letter, be between ${PLAYER_LIMITS.NAME_MIN} and ${PLAYER_LIMITS.NAME_MAX} characters, and be unique.`,
-    team: `Team is required, must start with an uppercase letter, and be between ${PLAYER_LIMITS.TEAM_MIN} and ${PLAYER_LIMITS.TEAM_MAX} characters.`,
-    league: `League is required, must start with an uppercase letter, and be between ${PLAYER_LIMITS.LEAGUE_MIN} and ${PLAYER_LIMITS.LEAGUE_MAX} characters.`,
-    photographer: `Photographer is required, must start with an uppercase letter, and be between ${PLAYER_LIMITS.PHOTOGRAPHER_MIN} and ${PLAYER_LIMITS.PHOTOGRAPHER_MAX} characters.`,
-    position: `Position is required and must be one of: ${VALID_POSITIONS.join(', ')}.`,
-    date_of_birth: `Date of birth must be valid, and the player must be between ${PLAYER_LIMITS.AGE_MIN} and ${PLAYER_LIMITS.AGE_MAX} years old.`,
-    price: `Price is required and must be an integer between ${PLAYER_LIMITS.PRICE_MIN} and ${PLAYER_LIMITS.PRICE_MAX}.`,
-    description: `Description is required and must be between ${PLAYER_LIMITS.DESCRIPTION_MIN} and ${PLAYER_LIMITS.DESCRIPTION_MAX} characters.`
+    player_name: `El nombre del jugador es obligatorio, debe empezar por mayúscula, tener entre ${PLAYER_LIMITS.NAME_MIN} y ${PLAYER_LIMITS.NAME_MAX} caracteres y no repetirse.`,
+    team: `El equipo es obligatorio, debe empezar por mayúscula y tener entre ${PLAYER_LIMITS.TEAM_MIN} y ${PLAYER_LIMITS.TEAM_MAX} caracteres.`,
+    league: `La liga es obligatoria, debe empezar por mayúscula y tener entre ${PLAYER_LIMITS.LEAGUE_MIN} y ${PLAYER_LIMITS.LEAGUE_MAX} caracteres.`,
+    photographer: `El fotógrafo es obligatorio, debe empezar por mayúscula y tener entre ${PLAYER_LIMITS.PHOTOGRAPHER_MIN} y ${PLAYER_LIMITS.PHOTOGRAPHER_MAX} caracteres.`,
+    position: `La posición es obligatoria y debe ser una de estas: ${VALID_POSITIONS.join(', ')}.`,
+    date_of_birth: `La fecha de nacimiento debe ser válida y el jugador debe tener entre ${PLAYER_LIMITS.AGE_MIN} y ${PLAYER_LIMITS.AGE_MAX} años.`,
+    price: `El precio es obligatorio y debe ser un número entero entre ${PLAYER_LIMITS.PRICE_MIN} y ${PLAYER_LIMITS.PRICE_MAX}.`,
+    description: `La descripción es obligatoria y debe tener entre ${PLAYER_LIMITS.DESCRIPTION_MIN} y ${PLAYER_LIMITS.DESCRIPTION_MAX} caracteres.`
 });
 
 function renderError(res, {
     status = 400,
-    title = 'Player information error',
+    title = 'Error en los datos del jugador',
     message,
     errors = [],
     backUrl = '/',
-    backLabel = 'Back to the home page',
+    backLabel = 'Volver a la página principal',
     retryUrl = '/player/new'
 }) {
     return res.status(status).render('error', {
@@ -76,6 +82,10 @@ function getRetryUrl(req) {
         : '/player/new';
 }
 
+function isValidObjectId(id) {
+    return ObjectId.isValid(id) && String(new ObjectId(id)) === String(id);
+}
+
 function dateYearsAgo(years, now = new Date()) {
     const year = now.getFullYear() - years;
     const month = now.getMonth();
@@ -92,22 +102,22 @@ function handleImageUpload(req, res, next) {
         let status = 400;
         let message;
         if (error.code === 'INVALID_IMAGE_TYPE') {
-            message = 'Only image files are allowed.';
+            message = 'Solo se permiten archivos de imagen.';
         } else if (error instanceof multer.MulterError && error.code === 'LIMIT_FILE_SIZE') {
-            message = `The image must not exceed ${PLAYER_LIMITS.IMAGE_MAX_BYTES / (1024 * 1024)} MB.`;
+            message = `La imagen no puede superar los ${PLAYER_LIMITS.IMAGE_MAX_BYTES / (1024 * 1024)} MB.`;
         } else if (error instanceof multer.MulterError && error.code === 'LIMIT_UNEXPECTED_FILE') {
-            message = 'Only one image file can be uploaded.';
+            message = 'Solo se puede subir una imagen.';
         } else if (error instanceof multer.MulterError) {
-            message = 'The image upload request is invalid.';
+            message = 'La solicitud de subida de imagen no es válida.';
         } else {
             console.error('Could not upload the player image:', error);
             status = 500;
-            message = 'The image could not be uploaded due to a server error.';
+            message = 'No se pudo subir la imagen debido a un error del servidor.';
         }
 
         return renderError(res, {
             status,
-            title: 'Image upload error',
+            title: 'Error al subir la imagen',
             message,
             errors: [message],
             retryUrl: getRetryUrl(req)
@@ -117,7 +127,7 @@ function handleImageUpload(req, res, next) {
 
 async function removeFile(filePath) {
     try {
-        await fs.promises.unlink(filePath);
+        await fs.unlink(filePath);
     } catch (error) {
         if (error.code !== 'ENOENT') {
             throw error;
@@ -131,31 +141,38 @@ async function removeUploadedFile(file) {
     }
 }
 
-async function removeStoredUpload(imagePath) {
-    if (typeof imagePath !== 'string' || !imagePath.startsWith('/uploads/')) {
+async function removeStoredImage(imagePath, playerId, store) {
+    if (typeof imagePath !== 'string' || !imagePath.startsWith('/images/')) {
         return false;
     }
 
-    const fileName = imagePath.slice('/uploads/'.length);
-    if (!fileName || fileName === '.' || fileName === '..' || path.posix.basename(fileName) !== fileName) {
+    const fileName = imagePath.slice('/images/'.length);
+    if (!fileName || fileName === '.' || fileName === '..' || path.basename(fileName) !== fileName) {
         return false;
     }
 
-    await removeFile(path.join(uploadsDirectory, fileName));
+    if (store.getPlayerByImage) {
+        const otherPlayer = await store.getPlayerByImage(imagePath, playerId);
+        if (otherPlayer) {
+            return false;
+        }
+    }
+
+    await removeFile(path.join(imagesDirectory, fileName));
     return true;
 }
 
 function getPlayerErrors(validation, file, existingPlayer) {
     const errors = Object.keys(validation.fieldErrors).map((field) =>
-        PLAYER_FIELD_ERRORS[field] || 'Player information is invalid.'
+        PLAYER_FIELD_ERRORS[field] || 'Los datos del jugador no son válidos.'
     );
 
     if (file) {
         if (!validateImageFile(file).valid) {
-            errors.push(`The image must be a valid image file no larger than ${PLAYER_LIMITS.IMAGE_MAX_BYTES / (1024 * 1024)} MB.`);
+            errors.push(`La imagen debe ser válida y no superar los ${PLAYER_LIMITS.IMAGE_MAX_BYTES / (1024 * 1024)} MB.`);
         }
     } else if (!existingPlayer || !existingPlayer.image) {
-        errors.push('An image is required.');
+        errors.push('La imagen es obligatoria.');
     }
 
     return errors;
@@ -172,6 +189,7 @@ function getPlayerErrors(validation, file, existingPlayer) {
  *   getPlayers()                   -> all players
  *   getPlayer(playerId)            -> player | null
  *   updatePlayer(playerId, player) -> true if the player was updated
+ *   getPlayerByImage(imagePath, excludeId) -> player | null (optional)
  *
  * Usage in app.js:
  *   app.use(require('./routes/playerRouter')(store));
@@ -186,10 +204,10 @@ module.exports = function createPlayerRouter(store) {
     const router = express.Router();
 
     const positionOptions = (selectedPosition) => [
-        { value: 'portero', label: 'Goalkeeper' },
-        { value: 'defensa', label: 'Defender' },
-        { value: 'centrocampista', label: 'Midfielder' },
-        { value: 'delantero', label: 'Forward' }
+        { value: 'portero', label: 'Portero' },
+        { value: 'defensa', label: 'Defensa' },
+        { value: 'centrocampista', label: 'Centrocampista' },
+        { value: 'delantero', label: 'Delantero' }
     ].map((position) => ({
         ...position,
         selected: position.value === selectedPosition
@@ -209,8 +227,8 @@ module.exports = function createPlayerRouter(store) {
         return res.render('playerForm', {
             player: formPlayer,
             isEdit,
-            formTitle: isEdit ? 'Edit Player' : 'Create New Player',
-            submitLabel: isEdit ? 'Save changes' : 'Save',
+            formTitle: isEdit ? 'Editar jugador' : 'Crear nuevo jugador',
+            submitLabel: isEdit ? 'Guardar cambios' : 'Guardar',
             action: isEdit ? `/player/${encodeURIComponent(playerId)}/edit` : '/player',
             hasPosition: options.some((position) => position.selected),
             positionOptions: options,
@@ -222,9 +240,15 @@ module.exports = function createPlayerRouter(store) {
 
     const renderNotFound = (res) => renderError(res, {
         status: 404,
-        title: 'Player not found',
-        message: 'The requested player does not exist.',
+        title: 'Jugador no encontrado',
+        message: 'El jugador solicitado no existe.',
         retryUrl: '/player/new'
+    });
+
+    const renderInvalidId = (res) => renderError(res, {
+        status: 404,
+        title: 'No encontrado',
+        message: 'El identificador del jugador no es válido.'
     });
 
     const handle = (fn) => async (req, res) => {
@@ -241,8 +265,8 @@ module.exports = function createPlayerRouter(store) {
             }
             return renderError(res, {
                 status: 500,
-                title: 'Server error',
-                message: 'An unexpected error occurred. Please try again later.',
+                title: 'Error del servidor',
+                message: 'Ha ocurrido un error inesperado. Inténtalo de nuevo más tarde.',
                 retryUrl: getRetryUrl(req)
             });
         }
@@ -273,15 +297,15 @@ module.exports = function createPlayerRouter(store) {
             await removeUploadedFile(req.file);
             return renderError(res, {
                 status: 400,
-                title: 'Player information is invalid',
-                message: 'Please correct the following issues:',
+                title: 'Datos del jugador no válidos',
+                message: 'Corrige los siguientes errores:',
                 errors
             });
         }
 
         const player = {
             ...validation.values,
-            image: `/uploads/${req.file.filename}`
+            image: `/images/${req.file.filename}`
         };
 
         await store.addPlayer(player);
@@ -289,14 +313,18 @@ module.exports = function createPlayerRouter(store) {
 
         return res.render('confirmation', {
             ok: true,
-            title: 'Player created',
-            message: `Player "${player.player_name}" was created successfully.`,
+            title: 'Jugador creado',
+            message: `El jugador "${player.player_name}" se ha creado correctamente.`,
             backUrl: '/',
-            backLabel: 'Back to the home page'
+            backLabel: 'Volver a la página principal'
         });
     }));
 
     router.get('/player/:id/edit', handle(async (req, res) => {
+        if (!isValidObjectId(req.params.id)) {
+            return renderInvalidId(res);
+        }
+
         const player = await store.getPlayer(req.params.id);
 
         if (!player) {
@@ -308,6 +336,11 @@ module.exports = function createPlayerRouter(store) {
 
     router.post('/player/:id/edit', handleImageUpload, handle(async (req, res) => {
         const { id } = req.params;
+        if (!isValidObjectId(id)) {
+            await removeUploadedFile(req.file);
+            return renderInvalidId(res);
+        }
+
         const existingPlayer = await store.getPlayer(id);
 
         if (!existingPlayer) {
@@ -326,22 +359,22 @@ module.exports = function createPlayerRouter(store) {
             await removeUploadedFile(req.file);
             return renderError(res, {
                 status: 400,
-                title: 'Player information is invalid',
-                message: 'Please correct the following issues:',
+                title: 'Datos del jugador no válidos',
+                message: 'Corrige los siguientes errores:',
                 errors,
                 backUrl: `/player/${encodeURIComponent(id)}`,
-                backLabel: 'Back to the player',
+                backLabel: 'Volver al jugador',
                 retryUrl: `/player/${encodeURIComponent(id)}/edit`
             });
         }
 
         const updatedPlayer = {
             ...validation.values,
-            image: req.file ? `/uploads/${req.file.filename}` : existingPlayer.image
+            image: req.file ? `/images/${req.file.filename}` : existingPlayer.image
         };
 
         const updateResult = await store.updatePlayer(id, updatedPlayer);
-        if (updateResult === false) {
+        if (updateResult === false || (updateResult && updateResult.matchedCount === 0)) {
             await removeUploadedFile(req.file);
             return renderNotFound(res);
         }
@@ -351,7 +384,7 @@ module.exports = function createPlayerRouter(store) {
         let cleanupWarning = false;
         if (req.file && existingPlayer.image) {
             try {
-                await removeStoredUpload(existingPlayer.image);
+                await removeStoredImage(existingPlayer.image, id, store);
             } catch (cleanupError) {
                 console.error('Could not remove the previous player image:', cleanupError);
                 cleanupWarning = true;
@@ -360,12 +393,12 @@ module.exports = function createPlayerRouter(store) {
 
         return res.render('confirmation', {
             ok: true,
-            title: 'Player updated',
+            title: 'Jugador actualizado',
             message: cleanupWarning
-                ? 'The player was updated, but the previous image could not be removed.'
-                : `Player "${updatedPlayer.player_name}" was updated successfully.`,
+                ? 'El jugador se actualizó, pero no se pudo eliminar la imagen anterior.'
+                : `El jugador "${updatedPlayer.player_name}" se actualizó correctamente.`,
             backUrl: `/player/${encodeURIComponent(id)}`,
-            backLabel: 'Back to the player'
+            backLabel: 'Volver al jugador'
         });
     }));
 
