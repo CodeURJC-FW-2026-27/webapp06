@@ -1,0 +1,38 @@
+{{! Tarjeta genérica de resultado (confirmación o error).
+    Contexto esperado:
+      ok          boolean – true = éxito (verde), false = error (rojo)
+      title       string – título del card-header
+      message     string – texto descriptivo
+      hasErrors   boolean – precalculado (errors.length > 0)
+      errors      [string] – lista opcional de mensajes de error
+      backUrl     string – URL del enlace "Volver"
+      backLabel   string – texto del botón de volver
+      retryUrl    string (opcional) – URL de "Volver a intentarlo"
+}}
+<div class="card shadow-sm">
+    <div class="card-header text-white {{#ok}}bg-success{{/ok}}{{^ok}}bg-danger{{/ok}}">
+        <h4 class="mb-0">
+            <i class="bi {{#ok}}bi-check-circle{{/ok}}{{^ok}}bi-exclamation-triangle{{/ok}} me-2"></i>{{title}}
+        </h4>
+    </div>
+    <div class="card-body">
+        <p>{{message}}</p>
+        {{#hasErrors}}
+        <ul class="text-danger">
+            {{#errors}}
+            <li>{{.}}</li>
+            {{/errors}}
+        </ul>
+        {{/hasErrors}}
+        <div class="d-flex gap-2">
+            <a href="{{backUrl}}" class="btn btn-outline-dark">
+                <i class="bi bi-arrow-left me-1"></i> {{backLabel}}
+            </a>
+            {{#retryUrl}}
+            <a href="{{retryUrl}}" class="btn btn-primary">
+                <i class="bi bi-pencil me-1"></i> Volver a intentarlo
+            </a>
+            {{/retryUrl}}
+        </div>
+    </div>
+</div>
