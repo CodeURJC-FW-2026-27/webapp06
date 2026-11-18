@@ -15,16 +15,16 @@
  * implemented.  See INTEGRATION NOTE below.
  */
 
-const express        = require('express');
+const express = require('express');
 const mustacheExpress = require('mustache-express');
-const path           = require('path');
+const path = require('path');
 
-const { connectDB }  = require('./db');
+const { connectDB } = require('./db');
 const { seedIfEmpty } = require('./seed');
 const createMainRouter = require('./routes/mainRouter');
 
 const PORT = process.env.PORT || 3000;
-const app  = express();
+const app = express();
 
 // --- View engine -----------------------------------------------------------
 app.engine('mustache', mustacheExpress(
@@ -34,9 +34,16 @@ app.set('view engine', 'mustache');
 app.set('views', path.join(__dirname, 'views'));
 
 // --- Static assets ----------------------------------------------------------
+// Redirect /index.html to / so the dynamic template is always served.
+app.get('/index.html', (req, res) => {
+    const qs = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
+    res.redirect(301, `/${qs}`);
+});
+
 // Serve CSS, JS, images and other static files from the project root so that
 // existing paths like /css/styles.css, /images/..., /assets/favicon.ico work.
-app.use(express.static(path.join(__dirname)));
+// Disable default 'index.html' serving so that the dynamic GET / route in mainRouter is not shadowed.
+app.use(express.static(path.join(__dirname), { index: false }));
 
 // --- Body parser (form data) ------------------------------------------------
 app.use(express.urlencoded({ extended: false }));
