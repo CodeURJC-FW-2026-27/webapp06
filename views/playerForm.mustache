@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="Formulario para crear un nuevo jugador" />
     <meta name="author" content="Grupo 06" />
-    <title>LEAGUES MARKET - Crear jugador</title>
+    <title>LEAGUES MARKET - {{formTitle}}</title>
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -23,7 +23,7 @@
                 <div class="col-md-8 col-lg-6">
                     <div class="card shadow-sm">
                         <div class="card-header bg-dark text-white">
-                            <h4 class="mb-0">Crear Nuevo Jugador</h4>
+                            <h4 class="mb-0">{{formTitle}}</h4>
                         </div>
                         <div class="card-body">
                             <form class="form" action="{{action}}" method="POST"
@@ -31,45 +31,52 @@
                                 <div class="mb-3">
                                     <label for="player_name" class="form-label">Nombre del jugador:</label>
                                     <input type="text" class="form-control" id="player_name" name="player_name"
-                                        placeholder="Nombre del jugador" />
+                                        placeholder="Nombre del jugador" value="{{player.player_name}}" />
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="date_of_birth" class="form-label">Fecha de nacimiento:</label>
-                                    <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" />
+                                    <input type="date" class="form-control" id="date_of_birth" name="date_of_birth"
+                                        value="{{player.date_of_birth}}" />
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="team" class="form-label">Equipo del jugador:</label>
                                     <input type="text" class="form-control" id="team" name="team"
-                                        placeholder="Equipo del jugador" />
+                                        placeholder="Equipo del jugador" value="{{player.team}}" />
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="position" class="form-label">Categoría (posición del jugador):</label>
                                     <select class="form-select" id="position" name="position">
-                                        <option value="" selected>Selecciona una categoría</option>
-                                        <option value="portero">Portero</option>
-                                        <option value="defensa">Defensa</option>
-                                        <option value="centrocampista">Centrocampista</option>
-                                        <option value="delantero">Delantero</option>
+                                        <option value="" {{^hasPosition}}selected{{/hasPosition}}>Selecciona una categoría</option>
+                                        {{#positionOptions}}
+                                        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                                        {{/positionOptions}}
                                     </select>
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="league" class="form-label">Liga:</label>
                                     <input type="text" class="form-control" id="league" name="league"
-                                        placeholder="Liga" />
+                                        placeholder="Liga" value="{{player.league}}" />
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="description" class="form-label">Descripción del jugador:</label>
                                     <textarea class="form-control" id="description" name="description" rows="3"
-                                        placeholder="Escribe una descripción del jugador"></textarea>
+                                        placeholder="Escribe una descripción del jugador">{{player.description}}</textarea>
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="image" class="form-label">Imagen del jugador:</label>
+                                    {{#hasImage}}
+                                    <div class="mb-2">
+                                        <img src="{{player.image}}" alt="{{player.player_name}}"
+                                            class="img-thumbnail" style="max-height: 180px" />
+                                        <p class="form-text mb-0">Si no seleccionas otra imagen, se conservará la actual.</p>
+                                    </div>
+                                    {{/hasImage}}
                                     <input type="file" class="form-control" id="image" name="image"
                                         accept="image/*" />
                                 </div>
@@ -77,7 +84,7 @@
                                 <div class="mb-3">
                                     <label for="photographer" class="form-label">Fotógrafo:</label>
                                     <input type="text" class="form-control" id="photographer" name="photographer"
-                                        placeholder="Nombre del fotógrafo" />
+                                        placeholder="Nombre del fotógrafo" value="{{player.photographer}}" />
                                 </div>
 
                                 <div class="mb-3">
@@ -85,7 +92,7 @@
                                     <div class="input-group">
                                         <span class="input-group-text">€</span>
                                         <input type="number" class="form-control" id="price" name="price"
-                                            placeholder="Precio" />
+                                            placeholder="Precio" value="{{player.price}}" />
                                     </div>
                                 </div>
 
@@ -94,7 +101,7 @@
                                         <i class="bi bi-x-circle me-1"></i> Cancelar
                                     </a>
                                     <button type="submit" class="btn btn-success">
-                                        <i class="bi bi-save me-1"></i> Guardar
+                                        <i class="bi bi-save me-1"></i> {{submitLabel}}
                                     </button>
                                 </div>
                             </form>
