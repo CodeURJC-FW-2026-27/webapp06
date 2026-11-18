@@ -247,6 +247,12 @@ Diego :
 
 ## PRÁCTICA 2.
 
+Carlos: 
+ Significant commit:  6dc5da2ee9482f7ba9b5c1f09683856e2e598aa6(https://github.com/CodeURJC-FW-2026-27/webapp06/commit/6dc5da2ee9482f7ba9b5c1f09683856e2e598aa6)
+
+Description: I implemented the setup of MongoDB and homepage features.
+Relevant files: seed.js, db.js, mainRooter.js, app.js
+
 Javier :
   Description  : I implemented the secondary entity (LaLiga Card Review): its server-side validation, the routes to create, edit and delete reviews, the review edit form, the form fields shared by creating and editing, and the list of reviews on the player detail page.
 
